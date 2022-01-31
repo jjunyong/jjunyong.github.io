@@ -84,3 +84,7 @@ public class Controller {
 - 의존성 주입을 받지 못해 NullPointerException이 뜰 일이 없다.
 - 의존하는 객체의 변수를 final로 선언할 수 있다.
 - 순환참조의 오류를 방지할 수 있다.
+
+---
+
+참고자료 : https://yaboong.github.io/spring/2019/08/29/why-field-injection-is-bad/
