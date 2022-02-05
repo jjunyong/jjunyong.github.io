@@ -4,7 +4,7 @@ title: '[REST API] HTTP Status Code 제어와 예외 해들링(Exception handlin
 date: '2022-02-04 00:00:00'
 author: jjunyong
 tags: REST
-categories: Web
+categories: WEB
 ---
 
 ## Http Status Code 제어
@@ -19,7 +19,7 @@ public ResponseEntity<User> createUser(@RequestBody User user){
     User savedUser = UserService.save(user);
     URI location = ServletUriComponentsBuilder.fromCurrentRequest()
         .path("/{id}")
-        .buildAndExpand(savedUser.getId())
+        .buildAndExpand(savedUser.ge
         .toUri();
 
     return ResponseEntity.created(location).build();
@@ -43,89 +43,124 @@ header의 Key값 중 location값에서 POST의 URI value를 알 수 있다.
 
   - 5xx : 서버의 문제
 
+> 이와 같이 REST API 설계 시 다양한 Http status code 를 활용하여 상황에 맞는 response로 요청자에게 응답해주는 것이 보다 나은 API를 만들기 위해
+> 매우 중요한 부분이다.
+
 ---
 
 ## 예외 핸들링
 
-: @ResponseStatus, @ControllerAdvice, @RestControllerAdvice
+: **@ResponseStatus, @ControllerAdvice(+@RestControllerAdvice)**
 
-​
+REST API에서 request에 대한 예외가 발생 시 핸들링 하는 방법에 대해서 알아보자.
 
-> **_Field injection is not recommended … Always use constructor based dependency injection in your beans_**
+아래와 같이 로직 처리 시 user가 존재하지 않을 때 UserNotFoundException을 throw하도록 하고,
 
-- DI를 하는 이유는 객체 내부에서 객체를 직접 생성하는 방식 보다 런타임 시 외부에서 생성한 객체를 인터페이스를 통해 넘겨받는 것이 더 느슨한 결합 방식이기 때문이다.
+```java
+if(user == null){
+    throw new UserNotFoundException(String.format("ID[%s] not found",id));
+}
+```
 
-## DI 방법 3가지
+UserNotFoundException 클래스를 따로 만들어 준다.
 
-### 1. Setter based injection (수정자 주입)
+```java
+public class UserNotFoundException extends RunTimeException{
+    public UserNotFoundException(String message){
+        super(message);
+    }
+}
+```
 
-```Java
-@Service
-public class Controller {
+<br>
 
-  private Service service;
+이렇게 구현 후 클라이언트에서 http://localhost:8080/users/1000 를 다시 호출하면,
 
-  public void setService(Service service){
-    this.service = service;
-  }
+500 Internal server error와 함께 message, trace값들을 response받을 수 있는데 이 때 2가지 문제가 있다.
 
-  public void run() {
-    service.run();
+- **trace값에 문제가 되는 코드들이 그대로 노출되는 보안 상의 이슈가 있을 수 있다.**
+- **정확히 어떤 에러인지에 대한 HTTP 코드를 명확하게 해줄 필요가 있다.**
+
+이 2가지 문제를 해결하기 위해 먼저 상황에 맞게 HTTP code를 반환하도록 설정해보자.
+위의 경우는 서버 측의 문제라기 보다는 클라이언트가 없는 사용자를 잘못 요청한 경우에 해당 함으로 Exception클래스를 아래와 같이 바꿔서 404 Not Found로 response 해주도록 변경하자. 이렇게 하면 클라이언트가 없는 user를 요청했을 때
+
+> 404, ID[1000] Not Found
+
+로 응답받게 되는 것을 확인할 수 있다.
+
+### @ResponseStatus 사용
+
+```java
+@ResponseStatus(HttpStatus.NOT_FOUND) // 404 NOT FOUND
+public class UserNotFoundException extends RunTimeException {
+
+  public UserNotFoundException(String message) {
+    super(message);
   }
 }
 ```
 
-- 위와 같이 Setter를 통해 주입하는 방식의 경우 Controller 객체가 생성될 때 반드시 service가 초기화 되지 않아도 되기 때문에, NPE 발생 가능성이 존재한다.
-- **그리고 생성자 주입과 필드 주입 방식은 '객체가 생성되는 시점'에서 순환 참조가 되는 지 여부를 확인할 수 있는 안전장치가 없다는 치명적인 단점도 존재한다.**
+<br>
+ 
+이렇듯 @ResponseStatus 를 사용하면 원하는 예외 상황에 대해서 HTTP 상태코드와 error message를 설정하는 것이 가능하다. 그러나 각 예외 상황에 대해서 예외클래스를 설정해주어야 한다는 점, 그리고 response의 payload를 변경할 수 없다는 한계가 있다.
 
-### 2. @Autowired를 통한 Field 주입
+### @ControllerAdvice(@RestControllerAdvice) 사용
 
-```Java
-@Service
-public class Controller {
+@RestController + @ControllerAdvice인 @RestControllerAdvice 어노테이션을 사용하여 예외처리하는 방법에 대해서 알아보자. 이 방법은 Spring5에서 가장 많이 사용되고 있는 방법이다.
 
-  @Autowired
-  private Service service;
+exception 패키지 아래에 GloabalExceptionHandler와 ErrorResponse 클래스를 아래와 같이 설정하자.
 
-  public void run() {
-    service.run();
-  }
-}
-```
+```java
+@RestControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-- 의존하는 레퍼런스 변수에 @Autowired만 붙여주면 되기 때문에 매우 편리하긴 하지만, 수정자 주입이 가지고 있는 문제와 동일한 문제를 가진다.
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<Object> handleAllExceptions(Exceptions ex, Webrequest request){
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+            LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
-### 3. Constructor based injection(생성자 주입)
-
-```Java
-@Service
-public class Controller {
-
-  private final Service service;
-
-  @Autowired
-  public Controller(Service service){
-    this.service = service;
-  }
-
-  public void run() {
-    service.run();
-  }
+    @ExceptionHandler(UserNotFoundException.class)
+    public final ResponseEntity<Object> handleUserNotFoundExceptions(Exceptions ex, Webrequest request){
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+            LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
 
 }
 ```
 
 <br>
 
-> 결국 약간 귀찮더라도 Spring에서 생성자릍 통한 의존성 주입을 강력히 권장하는 이유는 에러 관점에서 훨씬 안전한 방식이기 때문이다.
-> 생성자 주입 방식은 아래와 같은 장점을 지닌다.
+```java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ErrorResponse {
+  private final LocalDateTime timestamp;
+  private final String message;
+  private final String details;
+}
+```
 
-### 생성자 주입 방식의 장점
+<br>
 
-- 의존성 주입을 받지 못해 NullPointerException이 뜰 일이 없다.
-- 의존하는 객체의 변수를 final로 선언할 수 있다.
-- 순환참조의 오류를 방지할 수 있다.
+이렇게 하게 되면 GlobalExceptionHandler가 어플리케이션 전역에서 발생하는 예외상황에 대해서 예외처리를 하게 되고, 개발자 입장에서는 예외처리하고자 하는 케이스가 늘어날 때마다 해당 클래스에 메소드만 UserNotFoundExceptions 메소드와 같이 추가해주면 된다.
+
+> 만약에 설정되지 않은 예외가 발생 시 handleAllExceptions메소드가 500으로 response해주게 될 것이다.
+
+그리고 ErrorReponse 클래스를 설정함으로써 @ResponseStatus만 사용했던 때와 달리 reponseBody를 커스터마이징 할 수 있게 되었을 뿐만 아니라 trace가 response에 노출되던 보안상의 이슈까지 극복할 수 있게 되었다.
+
+> 만약에 trace를 response해주고 싶은 예외상황이 있다면 해당 메소드에서만 응답하도록 설정해주면 될 것이다.
 
 ---
 
-참고자료 : https://yaboong.github.io/spring/2019/08/29/why-field-injection-is-bad/
+참고자료
+
+- https://mangkyu.tistory.com/204, https://mangkyu.tistory.com/205
+
+- https://github.com/MangKyu/InterviewSubscription/tree/master/src/main/java/com/mangkyu/employment/interview/erros
+
+- https://bcp0109.tistory.com/303
+
+- https://github.com/edowon/restful-web-service/blob/master/src/main/java/com/example/restfulwebservice/user/UserNotFoundException.java
