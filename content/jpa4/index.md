@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[JPA] 4. 엔티티(Entity) 매핑 기초'
-date: '2022-03-05 00:00:00'
+date: '2022-03-08 00:00:00'
 author: jjunyong
 tags: JPA
 categories: Spring
