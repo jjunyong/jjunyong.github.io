@@ -3,7 +3,7 @@ module.exports = {
   description: `꾸준히 성장하는 개발 블로그`,
   language: `ko`, // `ko`, `en` => currently support versions for Korean and English
   siteUrl: `https://steadyandslow.com`,
-  ogImage: `/og-image.png`, // Path to your in the 'static' folder
+  ogImage: `/logo_square.jpg`, // Path to your in the 'static' folder
   comments: {
     utterances: {
       repo: `jjunyong/jjunyong.github.io`, // `zoomkoding/zoomkoding-gatsby-blog`,
