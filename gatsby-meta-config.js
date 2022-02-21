@@ -1,6 +1,6 @@
 module.exports = {
   title: `Steady and Slow`,
-  description: `꾸준히 성장하는 개발 블로그`,
+  description: `Steady and Slow history of growing`,
   language: `ko`, // `ko`, `en` => currently support versions for Korean and English
   siteUrl: `https://steadyandslow.com`,
   ogImage: `/logo_square.jpg`, // Path to your in the 'static' folder
