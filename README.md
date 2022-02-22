@@ -83,7 +83,7 @@ title: '' // zoomkoding.com
 description: '' // 줌코딩의 개발일기
 language: 'ko', // 'ko', 'en' (영어 버전도 지원하고 있습니다.)
 siteUrl: '' // https://www.zoomkoding.com
-ogImage: '/og-image.png', // 공유할 때 보이는 미리보기 이미지로 '/static' 하위에 넣고 싶은 이미지를 추가하시면 됩니다.
+ogImage: '/og-image.jpg', // 공유할 때 보이는 미리보기 이미지로 '/static' 하위에 넣고 싶은 이미지를 추가하시면 됩니다.
 ```
 
 ### 2. 댓글 설정
