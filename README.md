@@ -83,7 +83,7 @@ title: '' // zoomkoding.com
 description: '' // 줌코딩의 개발일기
 language: 'ko', // 'ko', 'en' (영어 버전도 지원하고 있습니다.)
 siteUrl: '' // https://www.zoomkoding.com
-ogImage: '/og-image.jpg', // 공유할 때 보이는 미리보기 이미지로 '/static' 하위에 넣고 싶은 이미지를 추가하시면 됩니다.
+ogImage: '/static/logo_rec.jpg', // 공유할 때 보이는 미리보기 이미지로 '/static' 하위에 넣고 싶은 이미지를 추가하시면 됩니다.
 ```
 
 ### 2. 댓글 설정
@@ -137,8 +137,8 @@ about 페이지 또한 gatsby-meta-config.js를 통해 생성됩니다. about �
 
 ```js
 {
-  date: '2021.02 ~',
-  activity: '개인 블로그 개발 및 운영',
+  date: '2022.01 ~',
+  activity: 'Steady and Slow 오픈',
   links: {
     post: '/gatsby-starter-zoomkoding-introduction',
     github: 'https://github.com/zoomkoding/zoomkoding-gatsby-blog',
@@ -147,6 +147,7 @@ about 페이지 또한 gatsby-meta-config.js를 통해 생성됩니다. about �
 },
 ```
 
+<!--
 ### 2. projects
 
 마찬가지로 각 project 정보를 배열로 제공해주시면 입력하신 순서에 맞춰서 projects section에 보여지게 됩니다.
@@ -164,7 +165,7 @@ about 페이지 또한 gatsby-meta-config.js를 통해 생성됩니다. about �
     demo: 'https://www.zoomkoding.com',
   }
 }
-```
+``` -->
 
 <br/>
 
