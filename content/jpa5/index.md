@@ -221,7 +221,8 @@ List<Member> members = findMember.getTeam().getMembers(); //이게 된다
         }
         ```
 
-        3) 양방향 매핑시 발생하는 무한 Loop
+    - (3) 양방향 매핑시 발생하는 무한 Loop
+    
         toString이나 json 생성 라이브러리 사용 시에 순환 참조 문제가 발생한다.  즉 Member가 Team을 참조하고 Team안에는 또 Member가 있고 다시 그 Member안에 Team 참조...무한 반복되는 문제. toString은 쓰지 않는 것을 추천하고 json으로 controller에서 내려줄 때는 entity로 절대 반환하지 말고 DTO를 통해 response 주도록 해야 한다. 
 
 ---
