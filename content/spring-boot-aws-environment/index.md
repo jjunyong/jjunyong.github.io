@@ -4,7 +4,7 @@ title: Spring boot 개발환경 설정 (gradle,JPA,MySQL,EC2,RDS)
 date: '2022-02-04 00:00:00'
 author: jjunyong
 tags: Spring AWS JPA EC2 gradle MySQL
-categories: Spring
+categories: AWS
 ---
 
 ## 1. AWS에서 프리티어로 EC2와 RDS 발급하기
