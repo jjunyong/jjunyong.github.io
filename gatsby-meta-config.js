@@ -2,7 +2,7 @@ module.exports = {
   title: `Steady and Slow`,
   description: `Steady and Slow history of growing`,
   language: `ko`, // `ko`, `en` => currently support versions for Korean and English
-  siteUrl: `https://steadyandslow.com`,
+  siteUrl: `https://jjunyong.github.io`,
   ogImage: `/logo_square.jpg`, // Path to your in the 'static' folder
   comments: {
     utterances: {

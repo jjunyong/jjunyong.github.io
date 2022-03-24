@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[AWS] Spring boot에서 AWS S3로 파일 업로드하면서 DB에 URL 저장하는 방법'
-date: '2022-04-22 20:00:00'
+date: '2022-04-23 20:00:00'
 author: jjunyong
 tags: AWS Spring
 categories: AWS
@@ -66,7 +66,7 @@ public class AwsS3Config {
 }
 ```
 
-### S3 업로드 Controller 설정
+### 3. S3 업로드 Controller 설정
 
 나는 본 글의 title처럼 Club이라는 entity를 생성할 때 S3에 썸네일 이미지가 업로드 됨과 동시에 DB에 S3에 업로드된 이미지의 URL도
 저장되도록 설정하도록 하였다. 
@@ -115,7 +115,7 @@ public class ClubController {
     }
 ```
 
-### S3 Service 설정
+### 4. S3 Service 설정
 
 S3 service 에서는 controller에서 전달받은 image를 업로드해주고 반환값으로 업로드한 url을 리턴하는 과정을 수행한다. 
 
