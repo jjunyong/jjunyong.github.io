@@ -192,12 +192,7 @@ public class AwsS3Config {
 ### 6. 빌드 시 옵션 추가
 
 5번까지 진행하면 로컬에서 jasypt를 사용하기 위한 환경설정은 끝난다. 
-그러나 빌드 하여 배포를 하려면 Intellij run시 jvm option 추가 해줬던 것처럼 아래와 같이 jasypt_password 환경변수를 추가해주어야 한다.
-
-```bash
-java -jar -Djasypt_password=password값 app.jar 
-```
-<br>
+그러나 빌드 하여 배포를 하려면 Intellij run시 jvm option 추가 해줬던 것처럼 jasypt_password 환경변수를 추가해주어야 한다.
 
 나는 github에 푸시하면 Github action이 Dockerfile 읽어서 자동으로 빌드하게 설정해두었기 때문에 아래와 같이 dockerfile에 추가해주었다.
 
@@ -205,7 +200,13 @@ java -jar -Djasypt_password=password값 app.jar
 FROM openjdk:11-jdk
 ARG JAR_FILE=build/libs/onyou-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","-Djasypt_password=password값","/app.jar"]
+["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar"]
+```
+
+그리고 docker 이미지 실행 시에 아래와 같이 입력해주면 환경변수로 jasypt password를 설정해 줄 수 있다. 
+
+```
+docker run -d -p 8080:8080 -e JAVA_OPTS=-Djasypt_password={패스워드} {도커이미지}:{태그}
 ```
 
 ---
