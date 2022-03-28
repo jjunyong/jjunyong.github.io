@@ -75,3 +75,15 @@ public @interface MyAnnotation {
 
 - 어노테이션 적용 대상 설정하기
 
+어노테이션을 적용할 수 있는 대상은 TYPE(클래스, 인터페이스, enum), ANNOTATION_TYPE, FIELD, CONSTRUCTOR, METHOD, LOCAL_VARIABLE, PACKAGE 와 같이 다양하다. 
+이 중 @Target이라는 어노테이션을 통해 @MyAnnotation이 어떤 경우에 한해서 적용될 수 있는 지를 설정할 수 있다.
+
+가령, 아래와 같이 설정하면 클래스, 인터페이스, enum, 멤버변수, 메소드에만 적용 가능한 어노테이션이 된다.
+
+```java
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+public @interface MyAnnotation { 
+  String value();
+  String name() default "hello"
+}
+```
