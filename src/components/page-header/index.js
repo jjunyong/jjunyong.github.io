@@ -33,9 +33,9 @@ function PageHeader({ siteTitle }) {
               </Link>
             </div>
             <div className="trailing-section">
-              <Link className="link" to="/about">
+              {/* <Link className="link" to="/about">
                 about
-              </Link>
+              </Link> */}
               <Link className="link" to="/posts">
                 posts
               </Link>
