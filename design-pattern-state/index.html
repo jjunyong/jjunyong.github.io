@@ -129,6 +129,7 @@ Context 클래스에서 State interface 객체를 가지고 있고, State과 관
         decoding="async"
       />
     </span></p>
+<hr>
 <h3 id="선풍기-예제를-통해-보는-state패턴" style="position:relative;"><a href="#%EC%84%A0%ED%92%8D%EA%B8%B0-%EC%98%88%EC%A0%9C%EB%A5%BC-%ED%86%B5%ED%95%B4-%EB%B3%B4%EB%8A%94-state%ED%8C%A8%ED%84%B4" aria-label="선풍기 예제를 통해 보는 state패턴 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>선풍기 예제를 통해 보는 state패턴</h3>
 <p>전원버튼, 강약 조절 버튼과 회전 버튼이 있는 선풍기를 state 패턴으로 구현 해보자.
 이 선풍기가 가질 수 있는 상태는 다음과 같다.</p>
@@ -202,11 +203,13 @@ Context 클래스에서 State interface 객체를 가지고 있고, State과 관
 <br>
 만약 이 선풍기의 동작을 if, else, switch 문으로 구현하려면 매우 케이스가 복잡해지고, 코드의 가독성은 떨어지게 될 것이다.
 이를 State 패턴을 통해 구현해 보자. 
+<br><br>
+<ol>
+<li>
+<p>FanState interface 만들기
 <br>
-1. FanState interface 만들기
-   <br>
-   Context 클래스에서 접근점으로 사용할 Fanstate 인터페이스를 먼저 구현했다. powerButton, rotateButton, intensityButton 3개로
-   전원, 회전, 강도를 조절할 수 있다.
+Context 클래스에서 접근점으로 사용할 Fanstate 인터페이스를 먼저 구현했다. powerButton, rotateButton, intensityButton 3개로
+전원, 회전, 강도를 조절할 수 있다.</p>
 <div class="gatsby-highlight" data-language="java"><pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">FanState</span> <span class="token punctuation">{</span>
   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">powerButton</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -214,7 +217,7 @@ Context 클래스에서 State interface 객체를 가지고 있고, State과 관
 
   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">intensityButton</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre></div>
-<ol start="2">
+</li>
 <li>
 <p>Concrete State 클래스들 만들기
 <br>
@@ -297,6 +300,7 @@ Freshman 클래스는 State 클래스를 멤버로 가지며, 각 버튼이 눌�
 <span class="token class-name">TCPEstablished</span> <span class="token keyword">implements</span> <span class="token class-name">TCPState</span>
 <span class="token class-name">TCPListen</span> <span class="token keyword">implements</span> <span class="token class-name">TCPState</span>
 <span class="token class-name">TCPClosed</span> <span class="token keyword">implements</span> <span class="token class-name">TCPState</span></code></pre></div>
+<hr>
 <h4 id="state-패턴-사용-시의-고려사항" style="position:relative;"><a href="#state-%ED%8C%A8%ED%84%B4-%EC%82%AC%EC%9A%A9-%EC%8B%9C%EC%9D%98-%EA%B3%A0%EB%A0%A4%EC%82%AC%ED%95%AD" aria-label="state 패턴 사용 시의 고려사항 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>State 패턴 사용 시의 고려사항</h4>
 <ul>
 <li>상태를 변수가 아닌 클래스로 표현 하는 것이 낫다면 State 패턴으로의 리팩토링을 고려할 수 있다.</li>
