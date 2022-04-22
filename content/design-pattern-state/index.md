@@ -34,6 +34,8 @@ State 패턴에서는 특정 메소드가 실행될 때 모드에 따라 다르�
 
 ![image2](./image2.png)
 
+---
+
 ### 선풍기 예제를 통해 보는 state패턴
 
 전원버튼, 강약 조절 버튼과 회전 버튼이 있는 선풍기를 state 패턴으로 구현 해보자.
@@ -74,21 +76,22 @@ State 패턴에서는 특정 메소드가 실행될 때 모드에 따라 다르�
 <br>
 만약 이 선풍기의 동작을 if, else, switch 문으로 구현하려면 매우 케이스가 복잡해지고, 코드의 가독성은 떨어지게 될 것이다.
 이를 State 패턴을 통해 구현해 보자. 
-<br>
+<br><br>
+
 1. FanState interface 만들기
    <br>
    Context 클래스에서 접근점으로 사용할 Fanstate 인터페이스를 먼저 구현했다. powerButton, rotateButton, intensityButton 3개로
    전원, 회전, 강도를 조절할 수 있다.
 
-```java
-public interface FanState {
-  public void powerButton();
+   ```java
+   public interface FanState {
+     public void powerButton();
 
-  public void rotateButton();
+     public void rotateButton();
 
-  public void intensityButton();
-}
-```
+     public void intensityButton();
+   }
+   ```
 
 2. Concrete State 클래스들 만들기
    <br>
@@ -185,6 +188,8 @@ TCPEstablished implements TCPState
 TCPListen implements TCPState
 TCPClosed implements TCPState
 ```
+
+---
 
 #### State 패턴 사용 시의 고려사항
 
