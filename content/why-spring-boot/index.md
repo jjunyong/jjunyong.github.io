@@ -1,5 +1,5 @@
 ---
-emoji: 🧢
+emoji: 🌸
 title: '[Spring] Spring boot는 무엇을 해주는가? 스프링 부트를 쓰는 이유'
 date: '2022-02-02 00:00:00'
 author: jjunyong

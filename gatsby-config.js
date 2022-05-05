@@ -69,7 +69,7 @@ module.exports = {
         lang: `en`,
         display: `standalone`,
         start_url: `/`,
-        icon: `static/logo_rec.jpg`, //favicon
+        icon: `assets/logo_square.jpg`, //favicon
       },
     },
     {
