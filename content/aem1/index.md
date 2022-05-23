@@ -1,10 +1,10 @@
 ---
 emoji: 🧢
-title: '[AEM] Adobe Experience Manager 1. AEM 개요'
+title: '[AEM] Adobe Experience Manager'
 date: '2022-02-07 22:13:33'
 author: jjunyong
 tags: AEM
-categories: AEM
+categories: WEB
 ---
 
 > AEM 을 소개함에 있어 해당 과정은 Udemy의 https://www.udemy.com/course/adobe-experience-manager-63 과정을
