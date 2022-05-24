@@ -1,3 +1,3 @@
 User-agent: *
-Sitemap: https://steadyandslow.com/sitemap/sitemap-index.xml
-Host: https://steadyandslow.com
+Sitemap: https://jjunyong.github.io/sitemap/sitemap-index.xml
+Host: https://jjunyong.github.io
