@@ -92,7 +92,6 @@ public void join_on_no_relation(){
 페치조인은 SQL에서 제공하는 기능이 아니고 SQL 조인을 활용해서 연관된 엔티티를 SQL 한번에 조회하는 기능이다.
 성능 최적화를 위해 사용된다.
 
-- 페치 조인을 미적용한 경우
 ```java
 
 @PersistenceUnit
@@ -112,10 +111,11 @@ public void fetchJoinNo(){
 
 ## 3. 서브 쿼리 
 
+- select, where 절에서 서브쿼리 사용 가능하며, alias명을 직접 지정해주어야 한다. 
+- static import 사용해서 JPAExpressions 표현 생략 가능하다. 
 ```java
 /* 나이가 가장 많은 회원 조회 */
 public void selectSubquery(){
-
 
     QMember memberSub = new QMember("memberSub");
     List<Tuple> result = queryFactory
@@ -131,8 +131,8 @@ public void selectSubquery(){
 ```
 
 - From 절에서 서브쿼리 사용 불가
-JPQL에서는 from 절의 서브쿼리, 즉 인라인 뷰는 지원하지 않는다.
-select, where절에서만 사용 가능하다.
+  - JPQL에서는 from 절의 서브쿼리, 즉 인라인 뷰는 지원하지 않는다.
+    select, where절에서만 사용 가능하다.
 
 - 대체방안
   - 서브쿼리를 join으로 변경
@@ -146,7 +146,7 @@ select, where절에서만 사용 가능하다.
 ## 4. Case 문
 
 사실 case문을 쓰는 것은 대부분의 경우 좋지 않고, 위와 같은 이유로 앱 단에서 해결하는 것이 더 좋은 방법이긴 하다.
-하지만 어쨋든 아래와 같은 방법으로 querydsl에서는 case문도 지원한다.
+하지만 어쨋든 아래와 같은 방법으로 querydsl에서도 case문을 지원한다.
 
 ```java
 
@@ -173,30 +173,33 @@ public void complexCase(){
             .fetch();
 }
 ```
-## 5. 상수, 문자 더하기
+## 5. 상수, 문자 더하기 사용
 
 - 상수 
-```java
-public void constant(){
+    ```java
+    public void constant(){
 
-  List<Tuple> result =
-    queryFactory
-            .select(member.username, Expressions.constant("A")
-            .from(member)
-            .fetch();
-}
-```
+      List<Tuple> result =
+        queryFactory
+                .select(member.username, Expressions.constant("A")
+                .from(member)
+                .fetch();
+    }
+    ```
 <br>
 
 - 문자 더하기
-```java
-public void concat(){
+    ```java
+    public void concat(){
 
-  List<String> result =
-    queryFactory
-            .select(member.username.concat("_").concat(member.age.stringValue()) 
-            .from(member)
-            .fetch();
-}
-```
+      List<String> result =
+        queryFactory
+                .select(member.username.concat("_").concat(member.age.stringValue()) 
+                .from(member)
+                .fetch();
+    }
+    ```
+
+  - 문자가 아닌 타입들은 .stringValue()로 문자로 변환가능하며, 특히 Enum처리할 때 많이 사용한다.
+
 
