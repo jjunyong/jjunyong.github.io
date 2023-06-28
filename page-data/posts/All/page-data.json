@@ -1,5 +1,5 @@
 {
     "componentChunkName": "component---src-templates-category-template-js",
     "path": "/posts/All",
-    "result": {"pageContext":{"currentCategory":"All","categories":["All","Spring","AWS","Error","WEB","Java","디자인패턴","Git"],"edges":[]}},
+    "result": {"pageContext":{"currentCategory":"All","categories":["All","Linux","DB","Spring","AWS","Error","WEB","Java","디자인패턴","Git"],"edges":[]}},
     "staticQueryHashes": ["1073350324","1956554647","2938748437"]}
