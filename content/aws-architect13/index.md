@@ -41,7 +41,13 @@ categories: AWS
 ---
 # 지속적인 학습 
 
+- 실습 링크 : https://us-east-1.student.classrooms.aws.training/class/5Hg5hDtgWR8wnGDGevtJcR
+  - 실습 참고 영상 : https://us-east-1.student.classrooms.aws.training/class/5Hg5hDtgWR8wnGDGevtJcR
 - AWS architecture 그리기
   - https://aws.amazon.com/architecture/icons
   - cacoo 
-- 
+- Certification
+  - AWS associate : https://aws.amazon.com/ko/certification/certified-solutions-architect-associate/?nc1=h_ls
+  - 시험 안내서 : https://d1.awsstatic.com/ko_KR/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Exam-Guide.pdf
+  - 예제 문항 : https://d1.awsstatic.com/ko_KR/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Sample-Questions.pdf
+  - AWS Skill builder 
