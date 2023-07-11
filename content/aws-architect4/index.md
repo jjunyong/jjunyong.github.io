@@ -90,6 +90,7 @@ categories: AWS
 
 ---
 ## 실습
+[실습 이미지- 244p]
 1. VPC 생성 
 2. VPC 설정에서 DNS - Enable DNS hostnames 
 3. subnet 생성

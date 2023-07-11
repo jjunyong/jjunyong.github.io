@@ -49,4 +49,21 @@ AWS의 모든 자원은 cloudwatch에 의해서 모니터링 된다.
 ## AWS autoscaling
 
 ### Auto scaling 그룹
-scaling기준은 CPU average 30% 등 admin이 설정할 수 잇음 
+scaling기준은 CPU average 30% 등 admin이 설정할 수 있음
+- auto scaling 구성 요소
+  - 시작 템플릿
+  - auto scaling 그룹
+    - min, max, desired capacity
+  - Auto scaling 정책
+
+### 시작 템플릿
+instance 시작을 위해 필요한 파라미터를 설정해놓은 템플릿이다.
+
+auto scaling 호출
+- 일정(예정된 급격한 증가 케이스)
+- CloudWatch 경보
+- 수동 크기 조정 
+- 상태 확인 
+
+기본적으로는 '동적' 조정 방식을 사용하여 auto scaling 한다. 
+- aws가 ML통해 예측한 방식으로 적용하여 scaling 할 수도 있다. 

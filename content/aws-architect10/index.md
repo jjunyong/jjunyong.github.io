@@ -37,10 +37,13 @@ VPC 만들 때 Gateway endpoint와 Interface endpoint 하나 씩만 최초에 �
   - 다중 피어링 
     - Full mesh로 해야 연결이 된다. 즉, trasitive peering이 안된다.
       - 공유 서비스 VPC를 만들어 불편함을 극복했었음
-  - Transit gateway 실습해보기 
+
   
 ### On-premise 데이터 센터와 AWS 간의 네트웍 연결
   - AWS site-to-site VPN
   - AWS Direct connect 
     - 우리 회사는 이걸 쓰고 있음 
   - Transit Gateway 
+
+### Transit Gateway
+

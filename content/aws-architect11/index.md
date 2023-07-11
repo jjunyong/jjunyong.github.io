@@ -40,3 +40,7 @@ categories: AWS
   - 로그 및 시각화 제공 
 [이미지]
 - Amazon State Language
+
+
+
+## 실습 : 서버리스 아키텍처 구축

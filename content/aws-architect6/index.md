@@ -58,3 +58,9 @@ RDS 데이터는 EBS에 AWS KMS 키로 암호화해서 저장한다.
 
 
 ## DB 마이그레이션 
+- SCT ( Schema converion tool ) : 스키마 옮길 때 사용
+- DMS ( Database migration service ) : 데이터 옮길 때 사용
+  - 원천에서 한 번 붓고 나서 추가 변경된 부분만 다시 반영하는 기능이 있음 
+
+
+

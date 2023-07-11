@@ -102,5 +102,21 @@ categories: AWS
 EBS는 인스턴스 하나에 연결되고, 객체 스토리지는 파일 시스템용으로 구축되지 않는다. 
 공유를 위해서는 EFS, FSx가 사용된다.
 
-## EFS
+## EFS(ㄸ)
+[이미지1,2]
 
+
+## FSx
+FSx와 EFS 차이?
+
+## AWS 데이터 마이그레이션 도구 
+- 온라인 방법
+  - Storage gateway
+  - Datasync
+- 오프라인 방법 : Snowcone, Snowball
+
+
+### Storage gateway 
+[아키텍처 이미지]
+
+### DataSync
