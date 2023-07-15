@@ -23,12 +23,96 @@ categories: DevOps
     `export PATH=$PWD/bin:$PATH`
     
 - istio 설치 ( https://istio.io/latest/docs/setup/install/istioctl/ )
+  - istioctl로 바로 설치하기 
     
     `istioctl install` 
     
     - default Profile으로 설치됨
     - 설치 후 deployment에 istiod, istio-ingressgateway설치되었음을 확인 가능
 
+  - istio-operator로 설치하기
+    - `istioctl operator init` : 이렇게 하면 istio-operator namespace와 함께 istio-operator pod가 생성된다. 
+    - 그런 후 k apply -f 를 해서 아래 istio-operator 파일을 apply 해주면 istiod, istio-ingressgateway, egressgateway 등 istio가 설치된다. 
+    ```yaml
+    apiVersion: install.istio.io/v1alpha1
+    kind: IstioOperator
+    metadata:
+      namespace: istio-system
+      name: example-istiocontrolplane
+    spec:
+    profile: demo
+    ```
+---
+### istio 설치 중 ingress, egress pod설치 안되던 error
+istio를 설치하면 ingress/egress pod가 istio-system namespace에서 1/1 running 상태가 되어야 하는데, 0/1 running으로 계속 나와서 확인해보니 아래와 같은 로그가 반복되고 있었다. 
+```
+warning envoy config external/envoy/source/common/config/grpc_stream.h:153 StreamSecrets gRPC config stream to sds-grpc closed: 2, failed to generate secret for default: failed to generate workload certificate: create certificate: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp: lookup istiod.istio-system.svc on 10.96.0.10:53: read udp 172.16.189.76:32810->10.96.0.10:53: i/o timeout"  thread=12
+```
+
+내용을 보면 istiod와 ingressgateway를 뭔가 연결해주지 못하는 문제로 생각되었다. 'lookup istiod.istio-system.svc on 10.96.0.10:53' timeout이 나고 있었기 때문에. 
+이것저것 구글링 해보다보니 결국 coredns와 연관됐다는 판단을 하고, coredns service의 cluster_ip를 직접 명시해주도록 Corefile을 수정했다. Corefile은 configmap 수정을 통해서만 반영된다.
+
+- 변경 전 Corefile
+```bash
+.:53 {
+    errors
+    health {
+       lameduck 5s
+    }
+    ready
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    prometheus :9153
+    forward . /etc/resolv.conf {
+       max_concurrent 1000
+    }
+    cache 30
+    loop
+    reload
+    loadbalance
+}
+```
+- 변경 후 Corefile
+```bash
+.:53 {
+    errors
+    health {
+       lameduck 5s
+    }
+    ready
+    kubernetes cluster.local in-addr.arpa ip6.arpa {
+       pods insecure
+       fallthrough in-addr.arpa ip6.arpa
+       ttl 30
+    }
+    prometheus :9153
+    forward . 10.96.0.10 {
+       max_concurrent 1000
+    }
+    cache 30
+    loop
+    reload
+    loadbalance
+}
+```
+
+```bash
+# 기존의 CoreDns configmap 저장
+kubectl -n kube-system get configmap coredns -o yaml > coredns-configmap.yaml 
+# 위와 같이 변경전 -> 후의 내용차이를 반영하기 
+vi coredns-configmap.yaml 
+# Configmap 업데이트 
+kubectl replace -f coredns-configmap.yaml 
+# CoreDNS pod 재시작
+kubectl -n kube-system delete pod -l k8s-app=kube-dns 
+```
+
+이렇게 하고 확인해보니 istio-ingressgateway/egressgateway가 정상적으로 '1/1 running' 상태로 설치된 것을 확인할 수 있었다.
+
+---
 ### Istio proxy 배포하기 
 istio는 application pod에 sidecar로 istio-proxy 컨테이너를 배포함으써 istio-proxy 컨테이너가 pod에 대한 모든 트래픽을 중개하게 된다.
 이미 구성된 k8s 클러스터에서 istio-proxy 컨테이너를 inject하는 방법은 아래와 같다.
