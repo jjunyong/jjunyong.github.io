@@ -163,11 +163,48 @@ server에서는 전달받은 암호화된 key값을 공개키를 이용하여 �
 <hr>
 <h1 id="스터디-문제" style="position:relative;"><a href="#%EC%8A%A4%ED%84%B0%EB%94%94-%EB%AC%B8%EC%A0%9C" aria-label="스터디 문제 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>스터디 문제</h1>
 <ul>
-<li>DNS의 동작원리에 대해서 설명해보세요.</li>
-<li>백업시 cp가 아닌 rsync를 쓰는 이유는 무엇인가?</li>
-<li>대칭키/비대칭키 암호화 방식에 대해서 설명하고 각각의 예를 말해보세요.</li>
-<li>SSH를 loginless하게 사용하는 방법 중 RSA를 활용한 접속방식에 대해서 설명해보세요.</li>
-</ul></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/error-docker-overlay/"><div class="direction">이전 글</div><div class="title">[Error] docker: failed to register layer: open /var/lib/docker/overlay2/... : no such file or directory.</div></a></div><div class="post-navigator-card-wrapper"></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" viewBox="0 0 24 24" aria-hidden="true" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Y2TNPV9C3Z"></script><script>
+<li><strong>DNS의 동작원리에 대해서 설명해보세요.</strong></li>
+</ul>
+<p>내 컴퓨터가 jy.com 이라는 도메인에 질의를 했다고 가정하고 설명하겠다.
+도메인의 맨 뒤에는 .라는 루트 도메인이 생략되어 있다. 즉 = jy.com = jy.com. 이다.</p>
+<ol>
+<li>내 컴퓨터는 내 컴퓨터의 로컬 DNS 에 jy.com. 에 대해서 질의를 한다.</li>
+<li>로컬 DNS는 최초로 root DNS에 마지막 ’.’ 바로 앞의 절(여기서는 .com) 대해서 질의한다.</li>
+<li>root DNS는 .com 을 담당하는 최상위 DNS 정보를 가지고 있기 때문에 그것에 대한 정보를 반환해준다.</li>
+<li>로컬 DNS는 .com 최상위 DNS에 ‘jy.com.’ 에 대해서 질의하여 도메인 소유자 DNS 정보를 얻는다.</li>
+<li>로컬 DNS는 마지막으로 도메인 소유자의 DNS에 ‘jy.com.’ 에 대해서 질의하여 해당 도메인의 A 레코드를 참조하여 IP 주소를 얻는다.</li>
+<li>로컬 DNS는 이 결과를 캐싱하며, 내 컴퓨터에 결과를 반환해준다.</li>
+</ol>
+<ul>
+<li>
+<p><strong>백업 시, cp가 아닌 rsync를 쓰는 이유는 무엇인가?</strong></p>
+<ul>
+<li>증분 백업(동기화)</li>
+<li>압축</li>
+<li>메타 데이터까지 복사</li>
+<li>데이터 손실 최소화</li>
+<li>기타 백업에 유용한 다양한 옵션</li>
+</ul>
+</li>
+<li>
+<p><strong>대칭키/비대칭키 암호화 방식에 대해서 설명하고 각각의 예를 말해보세요.</strong></p>
+</li>
+</ul>
+<p>암복호화 시 동일한 키를 쓰느냐 다른 키를 쓰느냐의 차이</p>
+<ul>
+<li>
+<p>대칭키 : AES256</p>
+</li>
+<li>
+<p>비대칭키 : RSA</p>
+</li>
+<li>
+<p><strong>SSH를 loginless하게 사용하는 방법 중 RSA를 활용한 접속방식에 대해서 설명해보세요.</strong></p>
+</li>
+</ul>
+<p>SSH Client가 SSH Server에 loginless하게 접속할 때 RSA방식을 이용해서 인증된 유저임을 증명하게 된다.
+client가 server에 접속 요청을 하게 되면 server에서 random key값을 client에게 보내게 되고 client는 그 key값을 private key로 암호화하여 server에 전송한다.
+server에서는 전달받은 암호화된 key값을 공개키를 이용하여 복호화하게 되며 그것이 server가 처음에 전송한 random key값과 일치한다면 해당 client를 인증된 사용자로 로그인시켜주는 방식이다.</p></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/error-docker-overlay/"><div class="direction">이전 글</div><div class="title">[Error] docker: failed to register layer: open /var/lib/docker/overlay2/... : no such file or directory.</div></a></div><div class="post-navigator-card-wrapper"></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" viewBox="0 0 24 24" aria-hidden="true" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Y2TNPV9C3Z"></script><script>
       
       
       if(true) {
