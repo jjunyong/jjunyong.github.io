@@ -1,6 +1,6 @@
 ---
 emoji: 🧢
-title: 'On-premise 서버 구축하기 4. Istio 환경 구축하기' 
+title: 'On-premise 4. Istio 환경 구축하기' 
 date: '2023-07-02 00:00:00'
 author: jjunyong
 tags: DevOps
@@ -53,51 +53,51 @@ warning envoy config external/envoy/source/common/config/grpc_stream.h:153 Strea
 이것저것 구글링 해보다보니 결국 coredns와 연관됐다는 판단을 하고, coredns service의 cluster_ip를 직접 명시해주도록 Corefile을 수정했다. Corefile은 configmap 수정을 통해서만 반영된다.
 
 - 변경 전 Corefile
-```bash
-.:53 {
-    errors
-    health {
-       lameduck 5s
-    }
-    ready
-    kubernetes cluster.local in-addr.arpa ip6.arpa {
-       pods insecure
-       fallthrough in-addr.arpa ip6.arpa
-       ttl 30
-    }
-    prometheus :9153
-    forward . /etc/resolv.conf {
-       max_concurrent 1000
-    }
-    cache 30
-    loop
-    reload
-    loadbalance
-}
-```
+  ```bash
+  .:53 {
+      errors
+      health {
+        lameduck 5s
+      }
+      ready
+      kubernetes cluster.local in-addr.arpa ip6.arpa {
+        pods insecure
+        fallthrough in-addr.arpa ip6.arpa
+        ttl 30
+      }
+      prometheus :9153
+      forward . /etc/resolv.conf {
+        max_concurrent 1000
+      }
+      cache 30
+      loop
+      reload
+      loadbalance
+  }
+  ```
 - 변경 후 Corefile
-```bash
-.:53 {
-    errors
-    health {
-       lameduck 5s
-    }
-    ready
-    kubernetes cluster.local in-addr.arpa ip6.arpa {
-       pods insecure
-       fallthrough in-addr.arpa ip6.arpa
-       ttl 30
-    }
-    prometheus :9153
-    forward . 10.96.0.10 {
-       max_concurrent 1000
-    }
-    cache 30
-    loop
-    reload
-    loadbalance
-}
-```
+  ```bash
+  .:53 {
+      errors
+      health {
+        lameduck 5s
+      }
+      ready
+      kubernetes cluster.local in-addr.arpa ip6.arpa {
+        pods insecure
+        fallthrough in-addr.arpa ip6.arpa
+        ttl 30
+      }
+      prometheus :9153
+      forward . 10.96.0.10 {
+        max_concurrent 1000
+      }
+      cache 30
+      loop
+      reload
+      loadbalance
+  }
+  ```
 
 ```bash
 # 기존의 CoreDns configmap 저장
@@ -163,3 +163,61 @@ https://metallb.universe.tf/installation/#installation-by-manifest
 MetablLB를 통해 해당 서비스에 ip를 할당해주려면 아래 설정 page를 참고하여 Layer2 Configuration으로 ipaddresspool과 l2advertisement를 설정해주면 된다. 
 ipaddresspool에서는 호스트 서버와 통신 가능한 대역을 겹치지 않도록 설정해주도록 하자. 
 - https://metallb.universe.tf/configuration/#layer-2-configuration
+
+### Istio 트래픽 라우팅 설정
+외부에서 istio 기반 k8s 클러스터로 pod로 요청이 왔을 때, 트래픽의 순서는 다음과 같다.
+1. 외부 -> LoadBlancer Type의 istio-ingressgateway service
+2. istio-gw service -> istio-ingressgateway pod
+  - 여기서 Gateway, VirtualService 리소스와 바인딩 된다. 
+3. istio-gw pod -> application service 
+  - VirtualService의 설정을 통해 istio-gw pod가 트래픽을 application의 service로 보내게 된다. 
+
+따라서 만약에 '7777' 이라는 istio 디폴트 설정에는 없는 특정 port를 통해 applicaiton을 서비스하고 싶다면 몇 가지를 추가 설정해주어야 한다.
+
+#### istio-ingressgateway service에 Port 추가 
+```yaml
+- port: 7777
+  targetPort: 7777
+  name: custom-port
+  protocol: TCP
+```
+#### Gateway에서 해당 port Listen하도록 추가 
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 7777
+        name: http
+        protocol: HTTP
+      hosts:
+        - '*'
+      ...
+```
+  - Gateway에 이렇게 port를 추가하면 ingressgateway에 7777 port에 대한 listener가 추가된다.
+    ```bash
+    $ istioctl proxy-config listener istio-ingressgateway-9f6bc6bd7-szd5k -n istio-system
+      ADDRESS PORT  MATCH DESTINATION
+      0.0.0.0 7777  ALL   Route: http.7777
+    ```
+#### 마지막으로 VirtualService 설정 추가
+마지막으로 virtualservice에서도 routing 설정을 하여 application service로 트래픽이 연결될 수 있도록 한다. 
+```yaml
+ - match:
+    - port: 7777
+    route:
+    - destination:
+        host: custom-service.{namespace}.svc.cluster.local
+        port:
+          number: {application service's port}
+```
+
+---
+## 참고자료
+- https://istio.io
+- https://learncloudnative.com/blog/2022-08-01-istio-gateway

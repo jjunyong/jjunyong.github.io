@@ -1,6 +1,6 @@
 ---
 emoji: 🧢
-title: 'On-premise 서버 구축하기 7. Redis 구축하기' 
+title: 'On-premise 7. Redis 구축하기' 
 date: '2023-07-11 00:00:00'
 author: jjunyong
 tags: DevOps
@@ -46,28 +46,17 @@ redis를 설치한 현 상태에서는 systemctl 명령어로 단일 'redis' 서
 
 ----
 ## Redis 설정
-kubernetes 클러스터 내에 띄워져 있는 모든 application pod에서 db서버에 설치 된 redis가 접속가능하도록 하기 위해서, redis를 pod로 띄우진 않았지만 redis 전용 service를 생성하여 redis서버로 로드밸런싱 되도록 한다. 
+kubernetes 클러스터 내에 띄워져 있는 모든 application pod에서 db서버에 설치 된 redis가 접속가능하도록 하기 위해서, application.yaml파일을 설정하고, redis.conf 파일에서 외부에서 접속 가능하도록 몇가지를 설정한다. ( bind, proctected mode)
 - /etc/redis.conf 설정 수정
   - bind 192.168.212.0/24 설정 추가 : k8s 모든 노드 대역으로부터의 access를 허용
   - 'protected-mode yes' -> 'protected-mode no'로 수정
   - sudo systemctl restart redis 재기동
-- ExternalName 타입의 redis-service 생성
-  - 아래 예시와 같이 redis
-  ```yaml
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: redis-service
-  spec:
-    type: ExternalName
-    externalName: <redis server ip>
-    ports:
-      - port: 6379
-  ```
-  - spring application.yaml에서는 아래와 같이 redis-service를 host로 지정만 해주면 됨
-  ```yaml
-  spring:
+- application.yaml
+```
+spring: 
   redis:
-    host: redis-service
-  ```
+    host: 192.168.0.21
+    port: 6379
+```
+
 여기까지 하면 redis 설치/실행 및 k8s 클러스터 application pod에서의 redis 접속 환경까지 설정되었다. 
