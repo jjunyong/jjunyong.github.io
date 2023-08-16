@@ -7,24 +7,4 @@ tags:
 categories: Error
 ---
 
-호스트 서버에서 평소에는 늘 VM에 SuperPutty로 접속하면 접속이 잘 됐었는데, 어느 날 갑자기 로그인 창에서 패스워드 입력하라고 나오지 않기 시작했다.
-아주 오래 기다려 나오더라도 패스워드 입력도 제대로 안 먹혔다.
-<br>
-
-### 해결 방법 1
-/etc/ssh/sshd_config 파일의 UseDNS 설정을 변경한다. 
-UseDNS yes로 디퐅르 설정이 되어 있어 Reverse DNS를 하기 때문에
-UseDNS no 로 변경해 한다. 변경 후 sshd 데몬 reload
-
-```
-systemctl restart sshd
-```
-
-### 해결 방법 2
-해결 방법 1을 해도 안될 경우! 
-호스트 서버에서 자동으로 ip를 할당 받도록 하지 않고, 8.8.8.8, 8.8.4.4 를 DNS서버로 지정해준다. 
-그리고 VM에서도 /etc/sysconfig/network-scripts/ifcfg-eth0 파일의 설정에서도 아래와 같이 DNS 서버 정보가 호스트와 일치하도록 해주면 된다. 
-```
-DNS1=8.8.8.8
-DNS2=8.8.4.4
-```
+https://igotit.tistory.com/entry/%EC%9C%88%EB%8F%84%EC%9A%B0-10-%EC%9E%90%EB%8F%99%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8-%EC%9E%90%EB%8F%99%EC%9E%AC%EB%B6%80%ED%8C%85-%EB%B0%A9%EC%A7%80-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0

@@ -50,14 +50,11 @@ module.exports = {
     //   },
     // },
     {
-      resolve: `gatsby-plugin-google-gtag`,
+      resolve: `gatsby-plugin-google-analytics`,
       options: {
-        // You can add multiple tracking ids and a pageview event will be fired for all of them.
-        trackingIds: [
-          'G-Y2TNPV9C3Z', // 설정 Google Analytics / GA
-          // "AW-CONVERSION_ID", // Google Ads / Adwords / AW
-          // "DC-FLOODIGHT_ID", // Marketing Platform advertising products (Display & Video 360, Search Ads 360, and Campaign Manager)
-        ],
+        trackingId: 'G-Y2TNPV9C3Z',
+        head: true,
+        anonymize: true,
       },
     },
     {

@@ -58,5 +58,4 @@ spring:
     host: 192.168.0.21
     port: 6379
 ```
-
 여기까지 하면 redis 설치/실행 및 k8s 클러스터 application pod에서의 redis 접속 환경까지 설정되었다. 

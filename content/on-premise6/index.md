@@ -1,6 +1,6 @@
 ---
 emoji: 🧢
-title: 'On-premise 서버 구축하기 6. DB 서버 구축하기' 
+title: 'On-premise 6. DB 서버 구축하기' 
 date: '2023-07-10 00:00:00'
 author: jjunyong
 tags: DevOps
