@@ -75,7 +75,7 @@ categories: Linux
     
 - NIC(Network Interface Card , Network Adaptor)
     
-    NIC는 컴퓨터의 네트워크 인터페이스를 제공하는 하드웨어 장치이다. NIC는 물리적인 전송 계층을 처리하며, 데이터를 전송 매체에 맞게 en/decapsylate한다. 예를 들어, 이더넷 NIC는 이더넷 프레임/Wifi 프레임을 생성하고, 데이터 링크 계층에서 패킷을 처리하며, 전송 매체(Fiber등) 등을 통해 데이터를 전송합니다.
+    NIC는 컴퓨터의 네트워크 인터페이스를 제공하는 하드웨어 장치이다. NIC는 물리적인 전송 계층을 처리하며, 데이터를 전송 매체에 맞게 en/decapsylate한다. 예를 들어, 이더넷 NIC는 이더넷 프레임을 생성하고, 데이터 링크 계층에서 패킷을 처리하며, 전송 매체(Fiber등) 등을 통해 데이터를 전송합니다.
     
 ![image7](image7.png)
 
@@ -209,7 +209,7 @@ Content-Length:3423 <br>
 - 한계와 극복
   - 매번 3 way handshake에 대한 시간이 소요된다.
   - Persistent Connections 
-    - 이 기술 덕분에 여러가지 리소르를 서버로 부터 내려받는 과정에서 매번 3 way handshake를 하지 않게 되었다. 
+    - 이 기술 덕분에 여러가지 리소스를 서버로 부터 내려받는 과정에서 매번 3 way handshake를 하지 않게 되었다. 
       ![image15](image15.png)
     - HTTP/2, HTTP/3에서 계속해서 최적화 되고 있음. 
 
@@ -227,5 +227,7 @@ Content-Length:3423 <br>
 3. HTTP 메시지 바디
   - 실제 전송할 데이터
 
-
+---
+## Reference 
+https://www.inflearn.com/course/http-%EC%9B%B9-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC/dashboard
 
