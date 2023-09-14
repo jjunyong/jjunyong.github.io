@@ -198,7 +198,8 @@
 <h4 id="3-분할-전송" style="position:relative;"><a href="#3-%EB%B6%84%ED%95%A0-%EC%A0%84%EC%86%A1" aria-label="3 분할 전송 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>3) 분할 전송</h4>
 <p>데이터를 분할하여 http로 전송하는 방법으로, Content-Length를 알 수 없기 때문에 쓰지 않는다.</p>
 <ul>
-<li>Transfer-Encoding: chunked 사용
+<li>
+<p>Transfer-Encoding: chunked 사용
 <span
       class="gatsby-resp-image-wrapper"
       style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
@@ -223,7 +224,16 @@
         loading="lazy"
         decoding="async"
       />
-    </span></li>
+    </span></p>
+</li>
+<li>
+<p>왜 한 response 안에서 데이터를 byte단위로 쪼개서 전송하는가?</p>
+<ul>
+<li>TCP 전송시 버퍼크기 ( OS 커널 파라미터 ) 와 연관이 있다.</li>
+<li>chunk 1개 1개가 TCP 요청이다.</li>
+<li>과거에 많이 사용되었고 지금은 잘 안 쓴다. 지금은 TCP가 알아서 자름</li>
+</ul>
+</li>
 </ul>
 <h4 id="4-범위-전송" style="position:relative;"><a href="#4-%EB%B2%94%EC%9C%84-%EC%A0%84%EC%86%A1" aria-label="4 범위 전송 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>4) 범위 전송</h4>
 <p>데이터의 범위를 명시하여 전송하는 방법</p>
@@ -254,6 +264,7 @@
         decoding="async"
       />
     </span></li>
+<li>영상과 같은 미디어 전송에 나눠서 보내기 위해 사용됨.</li>
 </ul>
 <h3 id="일반-정보" style="position:relative;"><a href="#%EC%9D%BC%EB%B0%98-%EC%A0%95%EB%B3%B4" aria-label="일반 정보 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>일반 정보</h3>
 <ul>
@@ -264,7 +275,11 @@
 <li>어떤 종류의 브라우저에서 장애가 나는지 파악 가능</li>
 </ul>
 </li>
-<li>Server : 요청을 처리하는 ORIGIN 서버의 소프트웨어 정보</li>
+<li>Server : 요청을 처리하는 ORIGIN 서버의 소프트웨어 정보
+<ul>
+<li>실제 사용은 안됨</li>
+</ul>
+</li>
 <li>Date : 메시지가 발생한 날짜와 시간</li>
 </ul>
 <h3 id="특별한-정보" style="position:relative;"><a href="#%ED%8A%B9%EB%B3%84%ED%95%9C-%EC%A0%95%EB%B3%B4" aria-label="특별한 정보 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>특별한 정보</h3>
@@ -678,6 +693,14 @@
 </li>
 </ul>
 </li>
+</ul>
+<h2 id="qa" style="position:relative;"><a href="#qa" aria-label="qa permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Q&#x26;A</h2>
+<ul>
+<li>Last-Modified나 ETag값은 웹 서버에서 URL별로 저장하는건가?</li>
+<li>s-maxage 가 프록시 캐시에만 적용되는데 어떻게 프록시 캐시인지 판별하는가?</li>
+<li>기아닷컴에서 CDN이 ETag 버려버렸음</li>
+<li>기아닷컴에서 max-age, s-max-age를 origin이 내려주지 않음 근데 CDN에서 max-age, s-max-age 헤더를 추가(변조) 해서 내려줌</li>
+<li>원칙적으로는 CDN에서는 헤더를 변조하지 않고 origin의 헤더를 그대로 내려주게 되어 있지만, max-age를 origin에서 제공하지 않는 등 origin이 제대로 캐시정책을 수립하고 있지 않는 경우가 많아서 m2와 같은 써드파티를 사용하여 CDN에서 헤더를 변조함.</li>
 </ul>
 <h2 id="reference" style="position:relative;"><a href="#reference" aria-label="reference permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Reference</h2>
 <p><a href="https://www.inflearn.com/course/http-%EC%9B%B9-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC/dashboard">https://www.inflearn.com/course/http-%EC%9B%B9-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC/dashboard</a></p></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/read-center-church3/"><div class="direction">이전 글</div><div class="title">[독서 모임] 도시를 사랑할 수 있을까 - 센터처치 Week3</div></a></div><div class="post-navigator-card-wrapper"><a class="post-card next" href="/read-center-church4/"><div class="direction">다음 글</div><div class="title">[독서 모임] 도시를 사랑할 수 있을까 - 센터처치 Week4</div></a></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/http-w3/";window.___webpackCompilationHash="4dc156c514f63a6f8d3e";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-f196834924f88edde8fc.js"],"app":["/app-82aac73f1d5a7f751fb8.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-12b5d8159c7e67968cd6.js"],"component---src-pages-404-js":["/component---src-pages-404-js-29258485103e835516fd.js"],"component---src-pages-about-js":["/component---src-pages-about-js-7ef65d31f4e471233a87.js"],"component---src-pages-index-js":["/component---src-pages-index-js-326b652c9ec950d6439a.js"],"component---src-templates-blog-template-js":["/component---src-templates-blog-template-js-2b0521eff6d4e80c8984.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-addefa15e14ce4af818f.js"]};/*]]>*/</script><script src="/polyfill-f196834924f88edde8fc.js" nomodule=""></script><script src="/app-82aac73f1d5a7f751fb8.js" async=""></script><script src="/framework-de157c6b30d4790e4e81.js" async=""></script><script src="/webpack-runtime-8feecb4880683b1a3b13.js" async=""></script></body></html>
