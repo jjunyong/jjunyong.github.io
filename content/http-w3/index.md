@@ -77,12 +77,18 @@ categories: WEB
 - Transfer-Encoding: chunked 사용
   ![image3](image3.png)
 
+- 왜 한 response 안에서 데이터를 byte단위로 쪼개서 전송하는가? 
+  - TCP 전송시 버퍼크기 ( OS 커널 파라미터 ) 와 연관이 있다. 
+  - chunk 1개 1개가 TCP 요청이다. 
+  - 과거에 많이 사용되었고 지금은 잘 안 쓴다. 지금은 TCP가 알아서 자름 
+
 #### 4) 범위 전송
 
 데이터의 범위를 명시하여 전송하는 방법
 
 - Content-Range 헤더 사용
   ![image4](image4.png)
+- 영상과 같은 미디어 전송에 나눠서 보내기 위해 사용됨. 
 
 ### 일반 정보
 
@@ -91,6 +97,7 @@ categories: WEB
 - User-Agent : 클라이언트의 애플리케이션 정보 ( 브라우저 정보, OS 정보 등 )
   - 어떤 종류의 브라우저에서 장애가 나는지 파악 가능
 - Server : 요청을 처리하는 ORIGIN 서버의 소프트웨어 정보
+  - 실제 사용은 안됨 
 - Date : 메시지가 발생한 날짜와 시간
 
 ### 특별한 정보
@@ -191,6 +198,7 @@ HTTP는 Stateless 프로토콜이며 비연결성이기 때문에 인증 시에 
     - 이때 Http body값은 없다. 따라서 헤더 데이터에 해당하는 0.1M만 전송해주면 된다.
     - 클라이언트에서는 cache-controld을 갱신하면서 캐시에서 데이터를 불러와서 쓰게 된다.
 
+
 ### 검증헤더와 조건부 요청2
 
 #### 검증헤더에는 2가지가 있다.
@@ -262,6 +270,13 @@ HTTP는 Stateless 프로토콜이며 비연결성이기 때문에 인증 시에 
   - must-revalidate는 origin에 접근할 수 없는 경우 504 bad gateway가 발생하도록 되어 있음
     ![image11](image11.png)
     - 통장 잔고와 같이 절대 캐시되서는 안되는 데이터는 no-cache에 더하여 must-revalidate까지 넣어주는 것이다.
+
+## Q&A
+- Last-Modified나 ETag값은 웹 서버에서 URL별로 저장하는건가? 
+- s-maxage 가 프록시 캐시에만 적용되는데 어떻게 프록시 캐시인지 판별하는가? 
+- 기아닷컴에서 CDN이 ETag 버려버렸음
+- 기아닷컴에서 max-age, s-max-age를 origin이 내려주지 않음 근데 CDN에서 max-age, s-max-age 헤더를 추가(변조) 해서 내려줌
+- 원칙적으로는 CDN에서는 헤더를 변조하지 않고 origin의 헤더를 그대로 내려주게 되어 있지만, max-age를 origin에서 제공하지 않는 등 origin이 제대로 캐시정책을 수립하고 있지 않는 경우가 많아서 m2와 같은 써드파티를 사용하여 CDN에서 헤더를 변조함. 
 
 ## Reference
 
