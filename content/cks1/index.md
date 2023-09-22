@@ -138,3 +138,34 @@ expirationSeconds: 604800 # 7일 동안 토큰을 유지
 9. 사용자는 앞으로 서버와 통신할 때 개인키로 암호화해서 메시지를 전송하며 서버는 7에서 최종적으로 득한 대칭키를 활용하여 복호화함으로써 안전한 보안 통신이 가능하게 되었다. 
 ---
 
+### Kubernetes에서의 TLS
+#### Server 인증서
+- Kube-api server
+  - apiserver.crt
+  - apiserver.key
+- ETCD server
+  - etcdserver.crt
+  - etcdserver.key
+- Kubelet server
+  - kubelet.crt
+  - kubelet.key
+
+#### Client 인증서
+- Admin 유저
+  - admin.crt
+  - admin.key
+- Kube-scheduler
+- Kube-controller-manager
+- Kube-proxy
+- kube-apiserver는 ETCD server에 대한 유일한 client이며 kubelet에 대한 client이기도 하다.
+- kubelet은 또한 kube-apiserver에 대한 client 이기도 하다. 
+
+![image9](./image9.png)
+![image10](./image10.png)
+
+이러한 인증서를 생성하기 위해서는 CA가 필요한데, k8s에서는 최소 1개 이상의 CA를 요구한다. ETCD 서버를 위한 볋도의 CA를 두기도 한다. 
+그리고 CA는 CA만의 certificate(공인키)와 key(개인키)를 지닌다. 
+
+#### 인증서 생성하기 
+
+
