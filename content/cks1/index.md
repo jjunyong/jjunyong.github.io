@@ -163,9 +163,74 @@ expirationSeconds: 604800 # 7일 동안 토큰을 유지
 ![image9](./image9.png)
 ![image10](./image10.png)
 
-이러한 인증서를 생성하기 위해서는 CA가 필요한데, k8s에서는 최소 1개 이상의 CA를 요구한다. ETCD 서버를 위한 볋도의 CA를 두기도 한다. 
+이러한 인증서를 생성하기 위해서는 CA가 필요한데, k8s에서는 최소 1개 이상의 CA를 요구한다. ETCD 서버를 위한 별도의 CA를 두기도 한다. 
 그리고 CA는 CA만의 certificate(공인키)와 key(개인키)를 지닌다. 
 
 #### 인증서 생성하기 
+openssl 명령을 사용한다.
 
+- CA에서의 작업 
+  - 1) Key 생성
+    ```bash
+      openssl genrsa -out ca.key 2048
+    ```
+  - 2) CSR ( Certificate Signing Request ) 생성
+    ```bash
+      openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
+    ```
+  - 3) Certificate Sign하기 ( self-sign )
+    ```bash
+      openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
+    ```
+이제 CA는 private key와 root 인증서를 가지게 되었다.
 
+- Admin 사용자에서의 작업 ( Client )
+  - 1) Key 생성
+    ```bash
+      openssl genrsa -out adin.key 2048
+    ```
+  - 2) CSR 생성
+     ```bash
+      openssl req -new -key admin.key -subj "/CN=kube-admin/O=system:masters" -out admin.csr
+    ```
+      - /O=system:masters는 admin 사용자의 권한 부여를 위해 필요한 구문이다. 
+
+    - kube-admin 이라고 적어준 것은 admin에 대한 네이밍을 한 것이며 어떤 이름이든 상관없다.
+  - 3) Certificate Sign ( CA-sign )
+    ```bash
+      openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt
+    ```
+
+admin 유저 뿐만 아니라 kube-proxy, scheduler 등의 다른 컴포넌트도 동일한 방식으로 client certificate을 발급한다. 
+
+앞서 웹브라우저의 TLS에 대해서 얘기할 때 모든 브라우저는 CA의 공개키(public certificate)을 지니고 있어서 서버로부터 받은 certificate을 클라이언트 단에서 유효한지 검증할 수 있다고 한 것처럼, k8s에서도 kuberenets-CA가 발급한 public certificate을 모든 client들이 가지고 있어야 한다.
+  ![image11](./image11.png)
+
+- Kube-apiserver 에서의 작업 ( Server )  : 아래 그림 참조 
+  - 1) Key 생성
+  - 2) CSR 생성
+  - 3) Certificate Sign ( CA-sign )
+
+![image12](./image12.png)
+  - kube-apiserver에서 이렇게 생성된 key들은 어떻게 설정되는가? 
+    ![image13](./image13.png)
+    <br>
+    - 위 그림의 설정에서 볼 수 있는 것처럼 apiserver는 ETCD, Kubelet에 대하여는 client이기 때문에 각각의 컴포넌트에 접근하기 위한 client certificate, key를 가지고 있어야 한다
+    - client-ca-file에서는 apiserver로 접근하려는 client가 가지고 있어야 할 ca인증서에 대한 정보를 설정하고 있다.
+    - ETCD, kubelet 관련한 ca 설정에서도 동일한 경로의 ca인증서 정보로 설정하고 있음을 알 수 있다. 동일 클러스터에서 CA 인증서는 모두 동일하기 때문이다.
+    - tls-cert-file,, tls-private-key에서는 apiserver의 서버 crt, 서버 key에 대해서 설정한다.
+
+- Kubelet에서의 작업, 설정 
+  - kubelet-config에서 yaml로 설정하여 관리하며 kube-apiserver에 대한 kubelet의 client certificate도 마찬가지로 여기서 관리한다. 
+    ![image14](./image14.png)
+  
+#### Cluster 내의 인증서 확인하기 
+- 직접 설정하기 vs kubeadm
+- kubeadm으로 프로비저닝 했을 때 인증서 관련된 설정이 어디에 있는 지는 아래와 같다.
+![image15](./image15.png)
+- kubeadm 환경으로 했을 때는 static pod의 log를 보고 설정을 확인할 수 있다. 
+- kube-apiserver, etcd같은게 죽었을 때는 docker 명령으로 컨테이너를 들여다 봐야 할 수 있다. 
+
+#### Certificate API
+- k8s는 csr object를 사용하여 k8s 리소스로서 사용자 별로 csr를 관리하고 그 역할을 controller-manager가 한다.
+- k8s에서 CA란 CA key, crt 파일 그 자체이며 이 파일들을 보관하고 있는 master node가 곧 CA 서버이다.
