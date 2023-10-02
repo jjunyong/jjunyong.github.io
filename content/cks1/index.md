@@ -234,3 +234,4 @@ admin 유저 뿐만 아니라 kube-proxy, scheduler 등의 다른 컴포넌트�
 #### Certificate API
 - k8s는 csr object를 사용하여 k8s 리소스로서 사용자 별로 csr를 관리하고 그 역할을 controller-manager가 한다.
 - k8s에서 CA란 CA key, crt 파일 그 자체이며 이 파일들을 보관하고 있는 master node가 곧 CA 서버이다.
+
