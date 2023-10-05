@@ -413,4 +413,331 @@ Kubernetes 버전 1.22 이전에서는 Kubernetes API에 액세스하기 위한 
 <li>서버는 지니고 있는 개인키로 (1에서 생성한) 복호화하여 대칭키를 득한다.</li>
 <li>사용자는 앞으로 서버와 통신할 때 개인키로 암호화해서 메시지를 전송하며 서버는 7에서 최종적으로 득한 대칭키를 활용하여 복호화함으로써 안전한 보안 통신이 가능하게 되었다.</li>
 </ol>
-<hr></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/aws-architect13/"><div class="direction">이전 글</div><div class="title">[AWS architect] 13. 백업 및 복구, 재해대책</div></a></div><div class="post-navigator-card-wrapper"><a class="post-card next" href="/linux-w1/"><div class="direction">다음 글</div><div class="title">[리눅스 스터디] 1. 리눅스 기초 &amp; IO redirecdtion</div></a></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/cks1/";window.___webpackCompilationHash="4dc156c514f63a6f8d3e";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-f196834924f88edde8fc.js"],"app":["/app-82aac73f1d5a7f751fb8.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-12b5d8159c7e67968cd6.js"],"component---src-pages-404-js":["/component---src-pages-404-js-29258485103e835516fd.js"],"component---src-pages-about-js":["/component---src-pages-about-js-7ef65d31f4e471233a87.js"],"component---src-pages-index-js":["/component---src-pages-index-js-326b652c9ec950d6439a.js"],"component---src-templates-blog-template-js":["/component---src-templates-blog-template-js-2b0521eff6d4e80c8984.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-addefa15e14ce4af818f.js"]};/*]]>*/</script><script src="/polyfill-f196834924f88edde8fc.js" nomodule=""></script><script src="/app-82aac73f1d5a7f751fb8.js" async=""></script><script src="/framework-de157c6b30d4790e4e81.js" async=""></script><script src="/webpack-runtime-8feecb4880683b1a3b13.js" async=""></script></body></html>
+<hr>
+<h3 id="kubernetes에서의-tls" style="position:relative;"><a href="#kubernetes%EC%97%90%EC%84%9C%EC%9D%98-tls" aria-label="kubernetes에서의 tls permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Kubernetes에서의 TLS</h3>
+<h4 id="server-인증서" style="position:relative;"><a href="#server-%EC%9D%B8%EC%A6%9D%EC%84%9C" aria-label="server 인증서 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Server 인증서</h4>
+<ul>
+<li>Kube-api server
+<ul>
+<li>apiserver.crt</li>
+<li>apiserver.key</li>
+</ul>
+</li>
+<li>ETCD server
+<ul>
+<li>etcdserver.crt</li>
+<li>etcdserver.key</li>
+</ul>
+</li>
+<li>Kubelet server
+<ul>
+<li>kubelet.crt</li>
+<li>kubelet.key</li>
+</ul>
+</li>
+</ul>
+<h4 id="client-인증서" style="position:relative;"><a href="#client-%EC%9D%B8%EC%A6%9D%EC%84%9C" aria-label="client 인증서 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Client 인증서</h4>
+<ul>
+<li>Admin 유저
+<ul>
+<li>admin.crt</li>
+<li>admin.key</li>
+</ul>
+</li>
+<li>Kube-scheduler</li>
+<li>Kube-controller-manager</li>
+<li>Kube-proxy</li>
+<li>kube-apiserver는 ETCD server에 대한 유일한 client이며 kubelet에 대한 client이기도 하다.</li>
+<li>kubelet은 또한 kube-apiserver에 대한 client 이기도 하다.</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 49.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABYlAAAWJQFJUiTwAAACPklEQVQoz02SW4sUVxSF67fmV+i7gj8giAQjOg8R1OhDIIQZfAgEFBMdx6G7M9WXul/61DlVp6pO9anq6vbTLsiQh8Xe+2F/sFjLqeua/6vSGtPUqEojVIXSDUGcslz7BFHC2g/x/JCbGxc/CKZZVdXtv1MIgZISVRSIouA6EJy990llRdcZjGkRheRqtmblJ0RxjiwU119chCjY5oJKlyglkbLAmYdbglyyDDNSIbmYJfzw/JovXsZms6ZuNR/mKx69Ouen1xf8+WmO7TviOGf2zmPxIeDmysffJHjrCGfhxWzinCjbEmdbvChh5q5JcoGUkm5nmHkRL9++n/Tx3w3WdihVcfMpwL0M8JcpSbQlThROG85pMh+deugix/7zguH8AfbqN3bDONnu+57dsMMOFmst3a6b7C6XS4QQeEFAkQf87WqcUqSUckulCupGY0yJqbd0VmP7fgL8B7ndbYdUisuPc5QqyXJBq0vcqMZZzZeEXoi39ohcH/12RXmxpDp32ZUt/X5g6Adsb29D6rqOnbXUdYMxZrpbY2ibBkcvErS/pYoEzSpnePaZ8cWc4cklNq3oj3v2w34ChHlBkGQ0bcNh7Bn3PVpXU8Kntpzq4ywWLv4mIEoTfD/k16e/88vDN7w5+4OmMRwOB8ZxZD+O1P2IGQ7EuuevVcEsbSjqjkK3ZFKjTz08xZ/nglJVhFHGvfs/c+fuj9y7/xhV1Ry/HifYCXw8HjgeRqQZmKU1nuyoux5tdtStoflu+Rvsp+FWPXS7OgAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image9"
+        title="image9"
+        src="/static/25b1618f40533bd8693a9651ddee1fda/37523/image9.png"
+        srcset="/static/25b1618f40533bd8693a9651ddee1fda/e9ff0/image9.png 180w,
+/static/25b1618f40533bd8693a9651ddee1fda/f21e7/image9.png 360w,
+/static/25b1618f40533bd8693a9651ddee1fda/37523/image9.png 720w,
+/static/25b1618f40533bd8693a9651ddee1fda/302a4/image9.png 1080w,
+/static/25b1618f40533bd8693a9651ddee1fda/07a9c/image9.png 1440w,
+/static/25b1618f40533bd8693a9651ddee1fda/ba40d/image9.png 2524w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 62.77777777777778%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABYlAAAWJQFJUiTwAAACy0lEQVQ4yz2Ty2/cVBjF579nwwqJPSzYVGIDQkItLaWCpE3TJE0yjsczfj/uta99/X6NJ/2hMaiLs/x+OufofJu87kiyHD8WuFFCkEjcWBClCt321HVN2zSrqqom1Q1+LHFDyd4N8UKJF0mSrCAtWzaiqLDCDCtM2fmCfZgishw3TnFFTpBkRFKtKsoK3bREscLa+V9lGi5ZXlJUDZtDJPGCEFVoHD8kFClBqjEPLubOwg8jDrbD1rQIRMYwdMhI4exjCl0iZIZrRZRFSV1XbMy44IOnV4gRKkJV46YVjhdjPTkMfU9VaFSWI5Sm7ztyqbENwfajj/uUkLjZCqzOwCjw2dkuhmFgWTt8z0WKhO0h4Lc3V1w/7rm4M/lk2Mi8ZBx6MqU5HBKMh4Dtg49lReS6XPveaBkirDvKQpGKBCFiGpVwazpcbm3eb23+ube4eDgQZZplnghkzt2DudbhBwEHLyDOctq2YVOLgPn+d3rjHf3nl8zWBY2M8IKYw94mV4ooDIkTQaprjvNEkpc4bkQSSXwvJojkWkd3BlZ7h+juhvD6A+nnW/yP79E7lzDOubl5IokzVK4pypqsbDgtR2Kl+eN6y8X9nr9uTV5ePSJVQde1bGpdE/uC2JdkTU2YCOq0wtjHvLp65N2NuR5dPNioqmU5zgzjRKorIpERy2ydWdN2/0VuU033p0P3i0l/6TG8tplkTdeMJConOI9cpAzTzDgdOR6PjNNM3U+odqRsO/Kqpe3OwJaNZ/rYfxvs326x325xLneEVkQ3TCTNjFsMJNXIMC9Mx2WN3E9HXD1yG1aYsiXQ4+qwOwPPQzYPDtXQkpY5icqQRUHZjgTlvB54ekJ1C8vpxLIsq8uz47YfV3X9SN/3dF3HJi1Kfn7xim+/+ZHvv3vBTz/8uv5l3w/wfAK+wJfnVc/Pz5z+hy7Hc/yZeZoYx+Er8F+6OsELmf13igAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image10"
+        title="image10"
+        src="/static/4710559c58048b6861cc934d2d5a7274/37523/image10.png"
+        srcset="/static/4710559c58048b6861cc934d2d5a7274/e9ff0/image10.png 180w,
+/static/4710559c58048b6861cc934d2d5a7274/f21e7/image10.png 360w,
+/static/4710559c58048b6861cc934d2d5a7274/37523/image10.png 720w,
+/static/4710559c58048b6861cc934d2d5a7274/302a4/image10.png 1080w,
+/static/4710559c58048b6861cc934d2d5a7274/07a9c/image10.png 1440w,
+/static/4710559c58048b6861cc934d2d5a7274/1d94f/image10.png 2264w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<p>이러한 인증서를 생성하기 위해서는 CA가 필요한데, k8s에서는 최소 1개 이상의 CA를 요구한다. ETCD 서버를 위한 별도의 CA를 두기도 한다.
+그리고 CA는 CA만의 certificate(공인키)와 key(개인키)를 지닌다.</p>
+<h4 id="인증서-생성하기" style="position:relative;"><a href="#%EC%9D%B8%EC%A6%9D%EC%84%9C-%EC%83%9D%EC%84%B1%ED%95%98%EA%B8%B0" aria-label="인증서 생성하기 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>인증서 생성하기</h4>
+<p>openssl 명령을 사용한다.</p>
+<ul>
+<li>CA에서의 작업
+<ul>
+<li>
+<ol>
+<li>Key 생성</li>
+</ol>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">  openssl genrsa <span class="token parameter variable">-out</span> ca.key <span class="token number">2048</span></code></pre></div>
+</li>
+<li>
+<ol start="2">
+<li>CSR ( Certificate Signing Request ) 생성</li>
+</ol>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">  openssl req <span class="token parameter variable">-new</span> <span class="token parameter variable">-key</span> ca.key <span class="token parameter variable">-subj</span> <span class="token string">"/CN=KUBERNETES-CA"</span> <span class="token parameter variable">-out</span> ca.csr</code></pre></div>
+</li>
+<li>
+<ol start="3">
+<li>Certificate Sign하기 ( self-sign )</li>
+</ol>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">  openssl x509 <span class="token parameter variable">-req</span> <span class="token parameter variable">-in</span> ca.csr <span class="token parameter variable">-signkey</span> ca.key <span class="token parameter variable">-out</span> ca.crt</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<p>이제 CA는 private key와 root 인증서를 가지게 되었다.</p>
+<ul>
+<li>Admin 사용자에서의 작업 ( Client )
+<ul>
+<li>
+<ol>
+<li>Key 생성</li>
+</ol>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">  openssl genrsa <span class="token parameter variable">-out</span> adin.key <span class="token number">2048</span></code></pre></div>
+</li>
+<li>
+<ol start="2">
+<li>CSR 생성</li>
+</ol>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash"> openssl req <span class="token parameter variable">-new</span> <span class="token parameter variable">-key</span> admin.key <span class="token parameter variable">-subj</span> <span class="token string">"/CN=kube-admin/O=system:masters"</span> <span class="token parameter variable">-out</span> admin.csr</code></pre></div>
+<ul>
+<li>
+<p>/O=system:masters는 admin 사용자의 권한 부여를 위해 필요한 구문이다.</p>
+</li>
+<li>
+<p>kube-admin 이라고 적어준 것은 admin에 대한 네이밍을 한 것이며 어떤 이름이든 상관없다.</p>
+</li>
+</ul>
+</li>
+<li>
+<ol start="3">
+<li>Certificate Sign ( CA-sign )</li>
+</ol>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">  openssl x509 <span class="token parameter variable">-req</span> <span class="token parameter variable">-in</span> admin.csr <span class="token parameter variable">-CA</span> ca.crt <span class="token parameter variable">-CAkey</span> ca.key <span class="token parameter variable">-out</span> admin.crt</code></pre></div>
+</li>
+</ul>
+</li>
+</ul>
+<p>admin 유저 뿐만 아니라 kube-proxy, scheduler 등의 다른 컴포넌트도 동일한 방식으로 client certificate을 발급한다.</p>
+<p>앞서 웹브라우저의 TLS에 대해서 얘기할 때 모든 브라우저는 CA의 공개키(public certificate)을 지니고 있어서 서버로부터 받은 certificate을 클라이언트 단에서 유효한지 검증할 수 있다고 한 것처럼, k8s에서도 kuberenets-CA가 발급한 public certificate을 모든 client들이 가지고 있어야 한다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 64.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABYlAAAWJQFJUiTwAAAC10lEQVQ4y02S2YscVRSH+0/3QRBBFJ/EiCAiElEYTHAnJmMSJYmd6emq6qpeqmu9dWvvureWXmrCJ9NRmYfDjwPnfGedNE3DXVNKsdvteNf8iF/DJ4gs4VpaWJmDm3rIWqKVehv7X84dnbSqRTeaRr2F3WqnW/wyZCrnZ6CVLblKDUSeEFUxSmmU1uf4u3oLnfhFhF9JhCxwQ8E2EvhCEsaStKrJdvX/xWpVUTUKkdeEIsMLJL4vCcL07Oe1ZvLV5ls+ubqPaQucIOGV5bL0M5K8oqoVu6b9t6OWvuvRuqWsGxzDZ2FsuDJtLGPN2g6pdoqJLHMMP+LKTYjihOlmiy1d4qxi7QesvAA3jLFdj9U2oFGKYejxnRhjusGtPJzFFunnaK2YfLN9wOfTr7HnK0zTYm6ZzOwZSRBimkvCIOKw35NKSSgkZa3YDwOJlzN/tmXxPGQ1jZFBgboFurGFl61oFn/R6Qod2MjSZxVYWPMVr6cWutVEoaDcqfNYx+MBxw2xbBfL3mIs1riBoGtbJqaYYV4/ov79IfnTXyif/EDx4hJvYWOYDiISJCIhTRMqpakbzel4PANW9oaqKomCmCQvabVm8t36Ad8vH+I7PmEY4Hkegechl5LZbIllbdjVmqTMuJZLGt0zjifsreDl3ObSnjJzXBxP0Hcdk2OkuWlHsp+XNIakW+SItcc2dDGciMevFrwwXS6nDvNNyP5wPAMdX5w/Ympv+HPmsPRihr5n8nc45fEfj1h99hLj3jOsT5/jXLwm9VL6/RGZFQghyeuK7nBgHEfG00jUJgRFilYdRVnTdQP6docX3o/cv7pg7XjoQSNkSpQJlrHPcDjhFQ1J1eHWCWlfcDO+YTydaPo9m1wTFoqwbKl1T9t2TDJZIpKCD9//go8/+JL33rnHT789ZZX6VO2Ik3UskoZtfUTtb3hzc3MeuRlO+GWPmzXEu4FaD+cr/wPVqrVDvSCpBAAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image11"
+        title="image11"
+        src="/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/37523/image11.png"
+        srcset="/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/e9ff0/image11.png 180w,
+/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/f21e7/image11.png 360w,
+/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/37523/image11.png 720w,
+/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/302a4/image11.png 1080w,
+/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/07a9c/image11.png 1440w,
+/static/f01aca82a4bd32f4de0e89c0c1f8b6c0/f0293/image11.png 2250w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<ul>
+<li>Kube-apiserver 에서의 작업 ( Server )  : 아래 그림 참조
+<ul>
+<li>
+<ol>
+<li>Key 생성</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>CSR 생성</li>
+</ol>
+</li>
+<li>
+<ol start="3">
+<li>Certificate Sign ( CA-sign )</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 55.55555555555556%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABYlAAAWJQFJUiTwAAADEUlEQVQozy2Qa09bBQCGzw9xMZEJg15OW0iUpdNtuiW7dAprmUNpdeybbrqwLK7OGEeiW8U4TczchK6ZU9PMwjYGW4YolFUYnG1AW1rlAL1faE9bNEXKl8dAfJPn0/vhefMKhWKJsBzhT3mRhUiMsLxENq+g5AsUC38Tj6dIxFJk0suslP6hXF5jdfVf1tcrVCoVKmsV1sv/s7aOkFMKyIsxluQI6USKeCJNJqdQKhYpFksUlSK+6Qm+/OYrvr/aTU+PE6fzGi6XC9c1F90/9HClt5urvT18d/0KQqm0ghSUGZMCjE+H8D4Oks0VWC2XWVlZYSNuj5ua2hp2GI3U19ej0WjQilp0GhHVdg1qsx6N2cDWF2oQFCVPNJFkPhJFjsZYiMXJLGfJ5pbJLmfJb/SRKJcufU378ePY7Xa6urpwXHTgcDhwXHDwxWcOLnR+zuVvLyNMzUiM+EbwTfoYmxjDO+5l+OEIQ95hHniH6bt3m4eTf3DOfhZx2/Nsb9BRrxcRdeLmSq1Oi86g47mtVbQfsyF4J8YIhILk8nkWlhaZl2X+kmUWI0uk0ikeSY/wDNziw9OnMIo1vCxqMNSpEEUtGq0alUaFWhSprtrCzsMfIGzY/XMBkqkUeUUhFo+TSCYpFAqkUilm/bN47t7CfqaDFw1qdtt20/iGEb3RgKpORW3VNuqq1dRWPUPj4bMIo+NjzIVDRGMxJiWJJ9NP8QcChMJhMukM0hMJ9x0PH506iaGhmqbRdl77rY29ziYaT+9Cu1eP/kADz1ZtodnyFsLvvlESyQSKohAKhZgLzhHwBwjOBYnFY0iPJX7qdXP+k3Psa36Fd26/h+Xim+yz7Ge/1cQB2yFMx15nx66XeP/kCYSh0V+ZeioxvyBvfjgT8DMzO4tvZgKfNM7A/Xtcd9/g465PsdqsvH3UhvVoG61HWmlpsnCkuWUTs9nMmY4OBN/UOHeHBhkcvk//gwH6Bu/wS38v7r6b/HjzZ5w3XHj6++g834nNZqPNZsXSYsFkMnHQdHAT0yETe17dQ+u7J/gPUuBwQOXNUeAAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image12"
+        title="image12"
+        src="/static/b5de8bd0c64c336801656899ef5b8e73/37523/image12.png"
+        srcset="/static/b5de8bd0c64c336801656899ef5b8e73/e9ff0/image12.png 180w,
+/static/b5de8bd0c64c336801656899ef5b8e73/f21e7/image12.png 360w,
+/static/b5de8bd0c64c336801656899ef5b8e73/37523/image12.png 720w,
+/static/b5de8bd0c64c336801656899ef5b8e73/302a4/image12.png 1080w,
+/static/b5de8bd0c64c336801656899ef5b8e73/07a9c/image12.png 1440w,
+/static/b5de8bd0c64c336801656899ef5b8e73/f3c07/image12.png 2516w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<ul>
+<li>
+<p>kube-apiserver에서 이렇게 생성된 key들은 어떻게 설정되는가?
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 55.00000000000001%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABYlAAAWJQFJUiTwAAACoElEQVQoz33R3WsTeRTG8V+0hpikaqyaTJqXJo1p2sykGenu1V4u640WU5RdUBBcaATRLuwfoC4s+M8IilZr9cqXZRG2StMkk7Zpk9YZbTo2M5F0gzdfaQQVFC8+nMMDBw48wrIsbPtLNjtZy35Hp/MeQ3+NYbyhVluj2bT5f7uDbbfY3t6m3W5/RewcNy2LrWaTt1tNLMvGNE0qlUVKpTKFwgLFYpFisYSmVbr5x1lB07SvCH1jk/nyMpVqjdJilZrRYPbhQ44mE8gZmUw2w7GxY6SVNMlUkkAwgMfrwev1du3sHs9nQm9sUtGq6Gs6xtorrHdt7tyd5oBzP8lwkkR/gkQwgc/lwyEcCCG+z2iYPHlR4nmhwtO5BYqrBg8ezRIYD5DNq2Qns8i/KwydS3Uz/6kAvWovrqALV3Qve47swbHL8ZFDIPQ3Df6dL/NfucqzlyXKqzr3Zmfwn/WT/kNGnlIYupRCviyjTCmkr8gEfpMI5CSkXyW8P/R++m6X6xCivFynvKDx1jQxGxtYVoub09OEzveT+XOU4SsjxCbjJPIJ4pNxjuaTDOYHieVjDFwcwH/cj+9HH/tG3biiA4iVdYMXcwusvzKo19dptdrcnplBOikhX1BQLigMnx8hMhFBOiERHA8SzoUJTYQI5UIETwbp+7kPZ9iJw9WDqNZ1lrRlmltNNjc26HQ63J6+z0GXj3ggTiqSYlAa7BYTPRwl1BfC4/DQI3pwCiduh5vdYvfnUupGg3+eFyhoK5SWa+gNm1sP7uO/fIShv1IMXx8hdTXF2I0x1L9Vhq+N0D/Vj/snN+LAN1pumFu8XFxlfqnOnFZl5bXJ42dPUXIy2TMqSi7TJZ+SGZ3IdqmnVdQzKulf0kRjUSKRHRHCAzE+ACs9BEstOz11AAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image13"
+        title="image13"
+        src="/static/cdf45d03e8c11102f79c6ccf1fcaad74/37523/image13.png"
+        srcset="/static/cdf45d03e8c11102f79c6ccf1fcaad74/e9ff0/image13.png 180w,
+/static/cdf45d03e8c11102f79c6ccf1fcaad74/f21e7/image13.png 360w,
+/static/cdf45d03e8c11102f79c6ccf1fcaad74/37523/image13.png 720w,
+/static/cdf45d03e8c11102f79c6ccf1fcaad74/302a4/image13.png 1080w,
+/static/cdf45d03e8c11102f79c6ccf1fcaad74/07a9c/image13.png 1440w,
+/static/cdf45d03e8c11102f79c6ccf1fcaad74/fc477/image13.png 2426w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+<br></p>
+<ul>
+<li>위 그림의 설정에서 볼 수 있는 것처럼 apiserver는 ETCD, Kubelet에 대하여는 client이기 때문에 각각의 컴포넌트에 접근하기 위한 client certificate, key를 가지고 있어야 한다</li>
+<li>client-ca-file에서는 apiserver로 접근하려는 client가 가지고 있어야 할 ca인증서에 대한 정보를 설정하고 있다.</li>
+<li>ETCD, kubelet 관련한 ca 설정에서도 동일한 경로의 ca인증서 정보로 설정하고 있음을 알 수 있다. 동일 클러스터에서 CA 인증서는 모두 동일하기 때문이다.</li>
+<li>tls-cert-file,, tls-private-key에서는 apiserver의 서버 crt, 서버 key에 대해서 설정한다.</li>
+</ul>
+</li>
+<li>
+<p>Kubelet에서의 작업, 설정</p>
+<ul>
+<li>kubelet-config에서 yaml로 설정하여 관리하며 kube-apiserver에 대한 kubelet의 client certificate도 마찬가지로 여기서 관리한다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 54.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABYlAAAWJQFJUiTwAAACgUlEQVQoz42S22oTURSG5zm8rTFpksZWbBFsm1RKBBW98kIUX0AQxFcQreKFIN6JeCe1UqugLQpW25raBmypaZJJmsMkmUmnaWYyk/PJTyYtCIrgho+91uJf/96wllAqlfgTwzAo7O0jSRmy2SzpdJpUyiJFNisfav7usxD+ZVgqGRiGyX5RR1ULPYqa3qv/1vyHoSW0ME2zx65mIhVKKAWdgmZgmOaB2aGhrusUi0U0TeshmIcC665UKpTL5R5WXKnWkPU6oqKzo5oUzAaNZvOARoN6vU6r1aTb7dLpdOh02ghiPEY0JhKKbLMV+kE8sYNVs/JwNEI8mSAajyEm4qysBnj08CFT96a4f/8Bd+/c48njJ8zNzvFqeoaZV3MIyXSSXC5HbCfO7NvXpKQUck5GjInMf1hgOxJGkiSUvMKLl9N4T3gYcdpxu104hpzYBx3Yh5zYnEewea8jWK8ufV1m/uMCs29eE1j7xlJghfcf5nm38J7V9TU+ffnM4vIiT58/wz96Cv/ICUaGB3H5XQyc9+A+58Hl72PwwjWEUDRGYCNMcGOLjJRGTCQJbEb4/iOMosjI+V2CoRjhnTTBYJCLk17GTh7nuGcIzzEPA0cHcPe5D7C7EaqVKlshBSVfot1u0Wm3iYgqUlYDfmKdZLpIJlcmn1e4NHqa0X47w6ddeCad9J9x4vA5cEw4sA3bELSiTiaVp6Bq1Go1qtUqal6jsKvTarV601MVHX2/iizLXLlxiQtXxzl72Yf35ji+2z68t3yM3x5n4soYgrUy25tJ5MwejUadZrNBQpTJJFW6P7u9XyrZYi+34kq7htmqUi5VMPdNjD0DXdXR8xrrKZVfd8vTxesx6hEAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image14"
+        title="image14"
+        src="/static/c2fed3e7189d711c9ceb10639a137bf0/37523/image14.png"
+        srcset="/static/c2fed3e7189d711c9ceb10639a137bf0/e9ff0/image14.png 180w,
+/static/c2fed3e7189d711c9ceb10639a137bf0/f21e7/image14.png 360w,
+/static/c2fed3e7189d711c9ceb10639a137bf0/37523/image14.png 720w,
+/static/c2fed3e7189d711c9ceb10639a137bf0/302a4/image14.png 1080w,
+/static/c2fed3e7189d711c9ceb10639a137bf0/07a9c/image14.png 1440w,
+/static/c2fed3e7189d711c9ceb10639a137bf0/36405/image14.png 2486w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></li>
+</ul>
+</li>
+</ul>
+<h4 id="cluster-내의-인증서-확인하기" style="position:relative;"><a href="#cluster-%EB%82%B4%EC%9D%98-%EC%9D%B8%EC%A6%9D%EC%84%9C-%ED%99%95%EC%9D%B8%ED%95%98%EA%B8%B0" aria-label="cluster 내의 인증서 확인하기 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Cluster 내의 인증서 확인하기</h4>
+<ul>
+<li>직접 설정하기 vs kubeadm</li>
+<li>kubeadm으로 프로비저닝 했을 때 인증서 관련된 설정이 어디에 있는 지는 아래와 같다.</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 62.77777777777778%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAACXBIWXMAABYlAAAWJQFJUiTwAAACfUlEQVQ4y22SSW/bVhRG+f9XdYqiTQuk6KLI0DhNbCSGk6DRHFWyBmviKFGURJGiOIqUZCeLU/BZcaKgi4Pv4rsHb3OfFMUxguh/iGPCKCZJNsznC2RZYWpZRHFy5Hyb0i5L2GUb9ts7bnJ2d3Pe5/PtPiVNQtaeQxL53O7Se2ebJfduntJv5zq/nuucPFc4OVV4cKrww3OFn19pPHpj8OCFKvqfXmr8cWny8Nzg5PSu++VM5/cLQ+wenmn8+EJFqmghOQU5OKKkhlT1r31RCagZMWU15MPIF+RzTQ8pKYGYi3KApPtbxjnBd/hbjEM/CXboXspg7qOtEqbRDWa0P3K+vCHJboayypBz3Jz0wKHP09vSMT1eF1u8b4yojSw65vqwv/PzOUca2AnDZcLwkCMnFY8Plxv6i4iBHQuxa/lcVDq8q/d5+7FHQ7WPHsy93JcKHY3ytU6hrVDpGXRND8PfM1hEtMcu19Ya3d8huxuudJvOxBWO4m7Q1ls0b4vqZXTNFe2xg3RRl3nX1LhsqJSHC6qKQ3uWUJWXvG2oImuKy9U0pmtndBY5Ke3ZRnTNSUjTDCmPlhT78/zbXPGkqPHnPyOelg0eFxRedz1eNhf8VZ1w3nY4azu86a2PuOj7vGotOa1b/N2Yi3xWHSNdtiaURg6FgU1ZWVEcLinLKz4aARXVo6J4lEYuVW1Nc7qhOU1omomYa7ovdrlTN0Jaswyp2NUpdXU+tBSqfZN/5Rl1eSau2hq79GYB/XkoDvblkgIvY2jH9OahOMa15QtPMiybycxhMnewbI9VmBKke9xww2IV4Cc7kv1n4t0nou3tPWF2c8hbgvRGuNbS4z+Ed6TORF+C+QAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image15"
+        title="image15"
+        src="/static/e1906d17f72cee48edac4cfec50b169b/37523/image15.png"
+        srcset="/static/e1906d17f72cee48edac4cfec50b169b/e9ff0/image15.png 180w,
+/static/e1906d17f72cee48edac4cfec50b169b/f21e7/image15.png 360w,
+/static/e1906d17f72cee48edac4cfec50b169b/37523/image15.png 720w,
+/static/e1906d17f72cee48edac4cfec50b169b/302a4/image15.png 1080w,
+/static/e1906d17f72cee48edac4cfec50b169b/07a9c/image15.png 1440w,
+/static/e1906d17f72cee48edac4cfec50b169b/1ffbd/image15.png 2108w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<ul>
+<li>kubeadm 환경으로 했을 때는 static pod의 log를 보고 설정을 확인할 수 있다.</li>
+<li>kube-apiserver, etcd같은게 죽었을 때는 docker 명령으로 컨테이너를 들여다 봐야 할 수 있다.</li>
+</ul>
+<h4 id="certificate-api" style="position:relative;"><a href="#certificate-api" aria-label="certificate api permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Certificate API</h4>
+<ul>
+<li>k8s는 csr object를 사용하여 k8s 리소스로서 사용자 별로 csr를 관리하고 그 역할을 controller-manager가 한다.</li>
+<li>k8s에서 CA란 CA key, crt 파일 그 자체이며 이 파일들을 보관하고 있는 master node가 곧 CA 서버이다.</li>
+</ul></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/aws-architect13/"><div class="direction">이전 글</div><div class="title">[AWS architect] 13. 백업 및 복구, 재해대책</div></a></div><div class="post-navigator-card-wrapper"><a class="post-card next" href="/cks2/"><div class="direction">다음 글</div><div class="title">[CKS] Cluster setup &amp; hardening 2</div></a></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/cks1/";window.___webpackCompilationHash="4dc156c514f63a6f8d3e";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-f196834924f88edde8fc.js"],"app":["/app-82aac73f1d5a7f751fb8.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-12b5d8159c7e67968cd6.js"],"component---src-pages-404-js":["/component---src-pages-404-js-29258485103e835516fd.js"],"component---src-pages-about-js":["/component---src-pages-about-js-7ef65d31f4e471233a87.js"],"component---src-pages-index-js":["/component---src-pages-index-js-326b652c9ec950d6439a.js"],"component---src-templates-blog-template-js":["/component---src-templates-blog-template-js-2b0521eff6d4e80c8984.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-addefa15e14ce4af818f.js"]};/*]]>*/</script><script src="/polyfill-f196834924f88edde8fc.js" nomodule=""></script><script src="/app-82aac73f1d5a7f751fb8.js" async=""></script><script src="/framework-de157c6b30d4790e4e81.js" async=""></script><script src="/webpack-runtime-8feecb4880683b1a3b13.js" async=""></script></body></html>
