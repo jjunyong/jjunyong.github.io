@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[CKS] Cluster setup & hardening 2'
-date: '2022-09-16 00:00:00'
+date: '2023-09-26 00:00:00'
 author: jjunyong
 tags: k8s
 categories: DevOps
