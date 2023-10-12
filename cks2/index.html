@@ -68,7 +68,7 @@
         }
       }
     })
-  </script><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2"/><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2"/><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2"/><style>@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:300;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:400;src:url(/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:500;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:300;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc-.woff) format("woff")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:400;src:url(/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff) format("woff")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:500;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc-.woff) format("woff")}</style><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script><title data-react-helmet="true">[CKS] Cluster setup &amp; hardening 2</title></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="page-wrapper"><header class="page-header-wrapper"><div class="page-header"><div class="front-section"><a class="link" href="/">Steady and Slow</a></div><div class="trailing-section"><a class="link" href="/posts">posts</a><div class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-18nc3u2"><div class="search-input-wrapper"><div class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root search-input css-feqhe6"><div class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-12rx5qu"><input type="text" aria-invalid="false" autoComplete="off" value="" class="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-mnn31" aria-autocomplete="list" aria-expanded="false" autoCapitalize="none" spellcheck="false" role="combobox"/><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium search-icon css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchOutlinedIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></div></div></div></div></div></div></header><main class="page-content"><header class="post-header"><div class="emoji">🧢</div><div class="info"><div class="categories"><a class="category" href="/posts/DevOps">DevOps</a></div></div><h1 class="title">[CKS] Cluster setup &amp; hardening 2</h1><div class="info"><div class="author">posted by <strong>jjunyong</strong>,</div> <!-- -->September 16, 2022</div></header><div class="post-content"><div class="markdown"><h3 id="kubeconfig" style="position:relative;"><a href="#kubeconfig" aria-label="kubeconfig permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>KubeConfig</h3>
+  </script><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2"/><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2"/><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2"/><style>@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:300;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:400;src:url(/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:500;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:300;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc-.woff) format("woff")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:400;src:url(/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff) format("woff")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:500;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc-.woff) format("woff")}</style><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script><title data-react-helmet="true">[CKS] Cluster setup &amp; hardening 2</title></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="page-wrapper"><header class="page-header-wrapper"><div class="page-header"><div class="front-section"><a class="link" href="/">Steady and Slow</a></div><div class="trailing-section"><a class="link" href="/posts">posts</a><div class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-18nc3u2"><div class="search-input-wrapper"><div class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root search-input css-feqhe6"><div class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-12rx5qu"><input type="text" aria-invalid="false" autoComplete="off" value="" class="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-mnn31" aria-autocomplete="list" aria-expanded="false" autoCapitalize="none" spellcheck="false" role="combobox"/><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium search-icon css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchOutlinedIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></div></div></div></div></div></div></header><main class="page-content"><header class="post-header"><div class="emoji">🧢</div><div class="info"><div class="categories"><a class="category" href="/posts/DevOps">DevOps</a></div></div><h1 class="title">[CKS] Cluster setup &amp; hardening 2</h1><div class="info"><div class="author">posted by <strong>jjunyong</strong>,</div> <!-- -->September 26, 2023</div></header><div class="post-content"><div class="markdown"><h3 id="kubeconfig" style="position:relative;"><a href="#kubeconfig" aria-label="kubeconfig permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>KubeConfig</h3>
 <p>~/.kube/config 에 config 파일로서 certification 에 대한 경로 등을 저장하는 것을 통해 kubectl 시 별도의 인증서 명시 또는 apiserver에 대한 주소 명시 등을 할 필요가 없게 된다. KubeConfig 파일은 세 부분으로 구성된다.</p>
 <ul>
 <li>Cluster</li>
@@ -334,12 +334,131 @@
 </li>
 <li>kuberenetes dashboard authentication
 <ul>
-<li>Token
-<ul>
-<li>RBAC</li>
-</ul>
-</li>
 <li>kubeconfig</li>
+<li>node port open</li>
+<li>auth proxy</li>
 </ul>
 </li>
-</ul></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/cks1/"><div class="direction">이전 글</div><div class="title">[CKS] Cluster setup &amp; hardening 1</div></a></div><div class="post-navigator-card-wrapper"><a class="post-card next" href="/linux-w1/"><div class="direction">다음 글</div><div class="title">[리눅스 스터디] 1. 리눅스 기초 &amp; IO redirecdtion</div></a></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/cks2/";window.___webpackCompilationHash="4dc156c514f63a6f8d3e";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-f196834924f88edde8fc.js"],"app":["/app-82aac73f1d5a7f751fb8.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-12b5d8159c7e67968cd6.js"],"component---src-pages-404-js":["/component---src-pages-404-js-29258485103e835516fd.js"],"component---src-pages-about-js":["/component---src-pages-about-js-7ef65d31f4e471233a87.js"],"component---src-pages-index-js":["/component---src-pages-index-js-326b652c9ec950d6439a.js"],"component---src-templates-blog-template-js":["/component---src-templates-blog-template-js-2b0521eff6d4e80c8984.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-addefa15e14ce4af818f.js"]};/*]]>*/</script><script src="/polyfill-f196834924f88edde8fc.js" nomodule=""></script><script src="/app-82aac73f1d5a7f751fb8.js" async=""></script><script src="/framework-de157c6b30d4790e4e81.js" async=""></script><script src="/webpack-runtime-8feecb4880683b1a3b13.js" async=""></script></body></html>
+</ul>
+<h3 id="플랫폼-바이너리-verification" style="position:relative;"><a href="#%ED%94%8C%EB%9E%AB%ED%8F%BC-%EB%B0%94%EC%9D%B4%EB%84%88%EB%A6%AC-verification" aria-label="플랫폼 바이너리 verification permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>플랫폼 바이너리 verification</h3>
+<ul>
+<li>다운로드 받은 파일과 다운로드 페이지의 체크섬 비교를 통한 검증</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 50.55555555555556%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABYlAAAWJQFJUiTwAAABi0lEQVQoz5XP0W6TUBzHcZ5hZm2hne+gPtHahi5ZO73zndqkJUKTvYN6pU2neGHrzQp0FA4FCpTvcpiZmgyNJJ/8+f3C4Zyj7OMUX6SEccY+LRBJRpQUBFHKXRjj/xRGCdsgZicSsiyrpQRhyM1Xm0+LJYvlDV/sb3xeLAnFnqKELD+SFSXFseSQH8ll+ZdH8bwt7z98xLZtRBgiREgQ7CjyvHZRWZa1lDjN2IZpdYr/WVj7w0gI7jyXzeYW13EJggDHcf95tdor74KA76sfiGiP53ms12t83ydOEpInpGn6ZC8dDgeUPD9yuxWIOMdxHFarFa7rVu+S6zp/ZLmpJLvfbTYboihCeXdtYsxmzIwZhmFUTMtiPp9jWRamaVadzJLM0+mUyWTyaDweP1JGb99woV9weTnk6uo1o9GI4XDIYDBA13V0/WH+yjr9fr/S6/Uq3W63cn7eRXnx6iVnZ89pt9t0Oh00TUNVVVqtFq3Ww5S50Whwetqg2WxWvZyyV1Wt+kbT2pycPOMeZamhpn69IRIAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image8"
+        title="image8"
+        src="/static/4dba12b2a95343134a579e1014a157ef/37523/image8.png"
+        srcset="/static/4dba12b2a95343134a579e1014a157ef/e9ff0/image8.png 180w,
+/static/4dba12b2a95343134a579e1014a157ef/f21e7/image8.png 360w,
+/static/4dba12b2a95343134a579e1014a157ef/37523/image8.png 720w,
+/static/4dba12b2a95343134a579e1014a157ef/302a4/image8.png 1080w,
+/static/4dba12b2a95343134a579e1014a157ef/07a9c/image8.png 1440w,
+/static/4dba12b2a95343134a579e1014a157ef/f60cd/image8.png 2318w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<h3 id="클러스터-업그레이드" style="position:relative;"><a href="#%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%93%9C" aria-label="클러스터 업그레이드 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>클러스터 업그레이드</h3>
+<ul>
+<li>kube-apiserver 보다 controller-manager, kube-scheduler, kubelet, kube-proxy, kubectl의 버전이 높을 수 없고, -1 또는 -2가 낮거나 같아야 한다.</li>
+<li>언제 업그레이드 해야 하는가?
+<ul>
+<li>최근 3개 minor 버전까지만 지원한다. 즉 1.25가 최신 버전이라면 공식 지원 버전은 1.23~1.25이다.</li>
+</ul>
+</li>
+</ul>
+<h4 id="업그레이드-방법" style="position:relative;"><a href="#%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%93%9C-%EB%B0%A9%EB%B2%95" aria-label="업그레이드 방법 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>업그레이드 방법</h4>
+<ul>
+<li>마스터 노드 먼저 다운하여 업그레이드 하고, 워커 노드를 업그레이드 한다.</li>
+<li>워커 노드 업그레이드 방법
+<ul>
+<li>워커 노드 drain 후  1개 씩 업그레이드 하기</li>
+<li>새로운 노드를 추가하는 방식으로 업그레이드 하기</li>
+</ul>
+</li>
+<li>kubeadm을 활용한 업그레이드
+<ul>
+<li>마스터 노드
+<ul>
+<li><code class="language-text">kubeadm upgrade plan</code>
+<ul>
+<li>upgrade에 필요한 정보를 알려준다.</li>
+</ul>
+</li>
+<li><code class="language-text">apt-get upgrade -y kubeadm=1.12.0-00</code></li>
+<li><code class="language-text">kubeadm upgrade apply v1.12.0</code></li>
+<li><code class="language-text">apt-get upgrade -y kubelet=1.12.0-00</code></li>
+<li><code class="language-text">systemctl restart kubelet</code></li>
+</ul>
+</li>
+<li>워커 노드
+<ul>
+<li><code class="language-text">kubectl drain node01</code></li>
+<li><code class="language-text">apt-get upgrade -y kubeadm=1.12.0-00</code></li>
+<li><code class="language-text">apt-get upgrade -y kubelet=1.12.0-00</code></li>
+<li><code class="language-text">kubeadm upgrade node config --kubelet-version v1.12.0</code></li>
+<li><code class="language-text">systemctl restart kubelet</code></li>
+<li><code class="language-text">kubectl uncordon node01</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="network-policy-ingress" style="position:relative;"><a href="#network-policy-ingress" aria-label="network policy ingress permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Network Policy, Ingress</h3>
+<p>내용 스킵</p>
+<h3 id="docker-service-configuration" style="position:relative;"><a href="#docker-service-configuration" aria-label="docker service configuration permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Docker Service Configuration</h3>
+<ul>
+<li>도커 CLI는 도커를 호스팅하고 있는 서버의 /var/run/docker.sock이라는 유닉스 소켓을 통해서 도커 데몬에 명령을 전달하게 되는데, 도커 데몬 실행 시 이를 야래와 같이 외부 환경(예를 들어 개발자의 노트북) 의 docker CLI에서 접근 가능하도록 인터페이스를 만들어 줄 수 있고 tls설정도 여기에 할 수 있다. 원래는 host 서버에서만 도커 데몬에 접근 가능하다.</li>
+<li>export DOCKER_HOST, export DOCKER_TLS=true 설정을 해줘야 한다.</li>
+<li>dockerd 실행 시 아래와 같이 설정해줘도 되지만 /etc/docker/daemon.json에 설정을 명세할 수도 있다. 이는 디폴트로 생성되지 않는 파일이기에 직접 생성해주어야 한다.</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 56.111111111111114%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABYlAAAWJQFJUiTwAAACpUlEQVQoz02RS28bZRSGvzSNx3aS5lYnsWfmm/uM52JPHDu2p07qNjGkjmPXJoUiZVGpKyTUTSXEDgQSsECVkAApG7rhFyAWiB1/gt/zIDtQsXikV2fx6Jz3iG29hi272LKDlEcERg9XZmxoMYrmUjSrFP5D+gvWZPCOVRncztQq62oVUdQCNrV4IdjSEkp6yraWUJQxBTelaESsahFFGZHXqyh6FaF7CN1dsKT5FGWAYibkrDpCUT1yqoeieeQ0jxXNJae5FPSQO07Ig8oZX+19wqx0SU5GbLptvnRH/ODPuPGvGJs9luyIYjVDCbqIvOazoroslx3u7jss/4+7msd6JWG/fMSWlaEYEff0GhN9zEfGjGt5xaHWJ+fWWIuPWY17iLls32zgJG3MegsnbWPXj7DjFLd2gJMeYBx2MJt9ClbIjtHlWetnnrdvuD7+lZPa5+SNgFKSsZseI5ZVm8Q5ZdC/oPf4MdnJIzq9EzrdLt2sS5Z1yNodOs0Om1bEih4gdIlQDYQ0WZIORTNE0fzbfufCYrnKlpVwzw5Z1f1bZMC6GbImq//mKor02a2kfJq74nX5JZ9tvGC8MUSxAvJGjDJ/yq48RA2b3PdqlM2UHTtmx4nZtmPue8kiz5lLVyoOm26LRuM5cTkj2X+AWW6yZsUU5huqHuIwfcT4yYjzs/e5PnvGdPKUi+GQ0cUFwydDzs/PGZyeYtUa5FSXvBcjWi2EVBGmhjB1hNS5o1oLqQgaTR72T+gf9/nw4ZTZcMpk+pTJZMJ4znjCe4MBRniA2NNpRjN+Gf3J2+lf/DT6nZvLP/jt47+5bL5C7JUR68a8v4gtK6RkJpScGiW//o5dP12cPO9SVCzq1ilv6t/xffINX8df8Kb2LW/THxk4HyAqkn8AQCRKsFptwIUAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image9"
+        title="image9"
+        src="/static/50df97b964ca68114a8409d16b5f37f9/37523/image9.png"
+        srcset="/static/50df97b964ca68114a8409d16b5f37f9/e9ff0/image9.png 180w,
+/static/50df97b964ca68114a8409d16b5f37f9/f21e7/image9.png 360w,
+/static/50df97b964ca68114a8409d16b5f37f9/37523/image9.png 720w,
+/static/50df97b964ca68114a8409d16b5f37f9/302a4/image9.png 1080w,
+/static/50df97b964ca68114a8409d16b5f37f9/07a9c/image9.png 1440w,
+/static/50df97b964ca68114a8409d16b5f37f9/8579d/image9.png 2412w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<h3 id="docker--데몬-보안" style="position:relative;"><a href="#docker--%EB%8D%B0%EB%AA%AC-%EB%B3%B4%EC%95%88" aria-label="docker  데몬 보안 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Docker : 데몬 보안</h3>
+<p>도커 데몬에 공격자가 접근이 가능해진다면,</p>
+<ul>
+<li>appication container, volume 삭제 가능</li>
+<li>bitcoin miner와 같은 공격자의 container 실행 가능</li>
+<li>privileged container 실행을 통해 서버의 root 권한 획득 가능</li>
+</ul>
+<br>
+- 그러므로 도커 데몬을 host 서버가 아닌 외부에서 접근 가능하도록 해주려고 한다면 해당 host 서버는 반드시 인터넷이 아닌 내부망에 있는 서버여야 한다.
+- 또한 tls 인증을 통해 보호해야 한다. tls 옵션만 해서는 안되고 tlsverify 설정을 client/server 양측에 모두 해줘야 인증서 기반의 authentication이 된다. 
+  - tlsverify: true
+  - export DOCKER_TLS_VERIFY=true
+- client에서는 ~/.docker 디렉토리에 client certificate을 위치 시켜야 한다. 
+![image10](./image10.png)</div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/read-center-church6/"><div class="direction">이전 글</div><div class="title">[독서 모임] 도시를 사랑할 수 있을까 - 센터처치 Week6</div></a></div><div class="post-navigator-card-wrapper"><a class="post-card next" href="/read-center-church7/"><div class="direction">다음 글</div><div class="title">[독서 모임] 도시를 사랑할 수 있을까 - 센터처치 Week7</div></a></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/cks2/";window.___webpackCompilationHash="4dc156c514f63a6f8d3e";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-f196834924f88edde8fc.js"],"app":["/app-82aac73f1d5a7f751fb8.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-12b5d8159c7e67968cd6.js"],"component---src-pages-404-js":["/component---src-pages-404-js-29258485103e835516fd.js"],"component---src-pages-about-js":["/component---src-pages-about-js-7ef65d31f4e471233a87.js"],"component---src-pages-index-js":["/component---src-pages-index-js-326b652c9ec950d6439a.js"],"component---src-templates-blog-template-js":["/component---src-templates-blog-template-js-2b0521eff6d4e80c8984.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-addefa15e14ce4af818f.js"]};/*]]>*/</script><script src="/polyfill-f196834924f88edde8fc.js" nomodule=""></script><script src="/app-82aac73f1d5a7f751fb8.js" async=""></script><script src="/framework-de157c6b30d4790e4e81.js" async=""></script><script src="/webpack-runtime-8feecb4880683b1a3b13.js" async=""></script></body></html>
