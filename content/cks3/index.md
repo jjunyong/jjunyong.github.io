@@ -17,8 +17,7 @@ System Hardening 섹션에서는 하기의 내용들에 대해 다룬다.
 - 오픈 포트 제한 
 - IAM role 
 - UFW 방화벽
-- Seccomp을 이용한 syscall 제한
-- Seccomp 과 k8s
+- Seccomp
 - AppArmor
 
 ### Least privilege principal
