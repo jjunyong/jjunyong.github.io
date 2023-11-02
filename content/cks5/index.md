@@ -132,5 +132,6 @@ gVisor와 달리 가벼운 kernel을 컨테이너에 포함시킴으로써 sandb
 #### Pod 간의 통신의 보안에서 사용되는 mTLS
 - istio
   ![image18](./image18.png)
+  - sidecar에서 encrypt해서 메시지를 다른 pod로 보내고 받는 pod에서도 istio sidecar에서 decrypt해서 application container로 메시지 전달
   - permissive / opportunistic 모드 : istio sidecar 컨테이너가 없는 외부 앱의 Plain text 통신도 허용
   - enforced / strict 모드 : mTLS 통신 만을 허용 
