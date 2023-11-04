@@ -46,3 +46,13 @@ Mutable vs Immutable infrastructure
     ![image8](./image8.png)
   - 이런 행동을 미연에 방지하기 위해서 아래와 같이 securityContext에서 `readOnlyRootFilesystem: true` 와 같은 설정을 할 수 있으나 이렇게 하면 pod가 fail한다. nginx pod는 아래 2개 디렉토리에 write하는 작업이 필요하기 때문이다. 그래서 해당 경로에는 volume을 마운트함으로써 해결한다. 
     ![image9](./image9.png)
+  - 결과적으로 아래와 같이 설정하는 것이 좋다. 
+    ![image10](./image10.png)
+
+### Kubernetes Auditing
+k8s에서는 auditing을 지원한다. 모든 request는 kube-apiserver를 통하게 되는데 request의 lifecycle에 따라 아래와 같은 stage를 거지게 된다.
+- RequestReceived stage: request가 valid한 지 여부를 떠나서 발생하는 event
+- ResponseStarted stage: request가 authenticated, authorized, validated 되고 나면 발생하는 event
+  - --watch와 같이 시간이 소요되는 request에 적용하기에 좋다. 
+- ResponseComplete stage : request가 처리되고 response가 응답될 때 발생하는 event 
+- Panic stage: request가 invalid하거나 error가 있을 때 발생하는 event 
