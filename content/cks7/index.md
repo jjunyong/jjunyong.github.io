@@ -56,3 +56,12 @@ k8s에서는 auditing을 지원한다. 모든 request는 kube-apiserver를 통�
   - --watch와 같이 시간이 소요되는 request에 적용하기에 좋다. 
 - ResponseComplete stage : request가 처리되고 response가 응답될 때 발생하는 event 
 - Panic stage: request가 invalid하거나 error가 있을 때 발생하는 event 
+각 stage는 auditing이 enable되어 있을 때  kube-apiserver에서 의해서 기록될 수 있는 event를 발생시킨다. 
+
+#### auditing Rules
+- 모든 event를 로깅하게 되면 비효율적이기 때문에 아래와 같이 Rule을 만들어 관리한다. audit level은 `None`, `Metadata`, `RequestResponse`가 있으며 None은 아무것도 남기지 않고 RequestResponse는 Metadata보다 더 많은 데이터를 기록한다. 아래 rule에서 secret에 대해서는 metadata 레벨로 기록되며 따로 namespace나 verb, resourceNames 등이 설정되지 않았기 때문에 모든 secret에 대한 operation에 대해서 metadata레벨로 로깅되게 된다. 
+![image11](./image11.png)
+- audit logging을 하기 위해서는 kube-apiserver에서 enable을 해줘야 하는데 아래와 같이 yaml파일에서 관리할 수 있으며 audit log를 어디에 저장할 지, 저장 공간과 기간은 얼마로 할 지에 대한 설정을 할 수 있다. 
+![image12](./image12.png)
+- 아래 그림은 해당 rule로 설정했을 때 log파일에 어떻게 결과가 출력되는 지에 대한 예시이다. 
+![image13](./image13.png)
