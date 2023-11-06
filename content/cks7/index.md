@@ -29,6 +29,7 @@ categories: DevOps
   - macro 라는 걸 써서 특정 조건을 다 쓰는 대신 alias로 쓸 수 있다. 
 - Falco 설정 파일 
   - 메인 config 파일은 `/etc/falco/falco.yaml` 이다. 이 파일엔 rule파일의 경로들과 log level, priority 등의 정보를 포함한다. priority는 해당 등급 이상의 rule에 대해서만 로깅하도록 하는 것이다.
+  - `rule_file:` 부분에서 가장 마지막에 오는 rule이 앞에 있는 rule을 override한다. 
   ![image5](./image5.png)
   ![image6](./image6.png)
   - rule 파일
@@ -46,7 +47,7 @@ Mutable vs Immutable infrastructure
     ![image8](./image8.png)
   - 이런 행동을 미연에 방지하기 위해서 아래와 같이 securityContext에서 `readOnlyRootFilesystem: true` 와 같은 설정을 할 수 있으나 이렇게 하면 pod가 fail한다. nginx pod는 아래 2개 디렉토리에 write하는 작업이 필요하기 때문이다. 그래서 해당 경로에는 volume을 마운트함으로써 해결한다. 
     ![image9](./image9.png)
-  - 결과적으로 아래와 같이 설정하는 것이 좋다. 
+  - 결과적으로 아래와 같이 설정되어 있어야 Immutable한 것이다. 
     ![image10](./image10.png)
 
 ### Kubernetes Auditing
@@ -63,5 +64,26 @@ k8s에서는 auditing을 지원한다. 모든 request는 kube-apiserver를 통�
 ![image11](./image11.png)
 - audit logging을 하기 위해서는 kube-apiserver에서 enable을 해줘야 하는데 아래와 같이 yaml파일에서 관리할 수 있으며 audit log를 어디에 저장할 지, 저장 공간과 기간은 얼마로 할 지에 대한 설정을 할 수 있다. 
 ![image12](./image12.png)
+- 설정을 하고 나서 kube-apiserver에 아래와 같이 audit log와 audit rule의 yaml파일에 대해서는 아래와 같이 volumes: , volumeMounts: 설정을 `/etc/kubernetes/manifests/kube-apiserver.yaml`에 해줘야 한다.
+  ```yaml
+  volumes: 
+    - name: audit
+      hostPath:
+        path: /etc/kubernetes/prod-audit.yaml
+        type: File
+    - name: audit-log
+      hostPath:
+        path: /var/log/prod-secrets.log
+        type: FileOrCreate
+  ```
+  ```yaml
+  volumeMounts: 
+    - mountPath: /etc/kubernetes/prod-audit.yaml
+      name: audit
+      readOnly: true
+    - mountPath: /var/log/prod-secrets.log
+      name: audit-log
+      readOnly: false
+  ```
 - 아래 그림은 해당 rule로 설정했을 때 log파일에 어떻게 결과가 출력되는 지에 대한 예시이다. 
 ![image13](./image13.png)
