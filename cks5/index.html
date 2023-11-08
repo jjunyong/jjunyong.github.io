@@ -1,0 +1,634 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><meta name="generator" content="Gatsby 4.25.7"/><meta data-react-helmet="true" name="google-site-verification" content="MFebU6SslKGXDPKTnr1Em5zriYnNpmZR44U73cLKsj8"/><meta data-react-helmet="true" name="naver-site-verification" content="40e460060b146c8626ef355d6bf7abcf2bdb41ff"/><meta data-react-helmet="true" property="og:title" content="[CKS] Microservice 취약성"/><meta data-react-helmet="true" property="og:site_title" content="[CKS] Microservice 취약성"/><meta data-react-helmet="true" name="description" content="Security context 컨테이너를 실행할 때 하기와 같이 어떤 유저로 실행할지, 어떤 capability를 추가하거나 뺼 지 등 보안 설정을 할 수 있다. 이는 k8s pod definition에서도 Security context 절을 통해 설정할 수 있는데, pod 레벨에서 설정하면 pod 내의 모든 컨테이너에 적용되고 컨테이너 레벨에서 설정을 하면 그 설정으로 override된다. Pod 레벨 예시
+ Container 레벨 예시
+  명령을 통해 특정 pod를 실행시키고 있는 user가 무엇인지 알 수 있다. Admission controller admission controller는 authentication/authorization 단계에서 수행할 수 없는 보안조치를 위한 부가적인 기능들을 제공한다.
+ NamespaceExists와 같은 모듈은 디폴트로 적용되어 있어서 pod가 생성될 namespace가 실제 존재하는지 체크하고, NamespaceAutoProvisio…"/><meta data-react-helmet="true" property="og:description" content="Security context 컨테이너를 실행할 때 하기와 같이 어떤 유저로 실행할지, 어떤 capability를 추가하거나 뺼 지 등 보안 설정을 할 수 있다. 이는 k8s pod definition에서도 Security context 절을 통해 설정할 수 있는데, pod 레벨에서 설정하면 pod 내의 모든 컨테이너에 적용되고 컨테이너 레벨에서 설정을 하면 그 설정으로 override된다. Pod 레벨 예시
+ Container 레벨 예시
+  명령을 통해 특정 pod를 실행시키고 있는 user가 무엇인지 알 수 있다. Admission controller admission controller는 authentication/authorization 단계에서 수행할 수 없는 보안조치를 위한 부가적인 기능들을 제공한다.
+ NamespaceExists와 같은 모듈은 디폴트로 적용되어 있어서 pod가 생성될 namespace가 실제 존재하는지 체크하고, NamespaceAutoProvisio…"/><meta data-react-helmet="true" property="og:author" content="Jplus"/><meta data-react-helmet="true" property="og:image" content="/logo_square.jpg"/><meta data-react-helmet="true" property="og:type" content="website"/><style data-href="/styles.403d7a8a431a9dbd54c6.css" data-identity="gatsby-global-css">@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:100;src:local("Montserrat Thin "),local("Montserrat-Thin"),url(/static/montserrat-latin-100-8d7d79679b70dbe27172b6460e7a7910.woff2) format("woff2"),url(/static/montserrat-latin-100-ec38980a9e0119a379e2a9b3dbb1901a.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:100;src:local("Montserrat Thin italic"),local("Montserrat-Thinitalic"),url(/static/montserrat-latin-100italic-e279051046ba1286706adc886cf1c96b.woff2) format("woff2"),url(/static/montserrat-latin-100italic-3b325a3173c8207435cd1b76e19bf501.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:200;src:local("Montserrat Extra Light "),local("Montserrat-Extra Light"),url(/static/montserrat-latin-200-9d266fbbfa6cab7009bd56003b1eeb67.woff2) format("woff2"),url(/static/montserrat-latin-200-2d8ba08717110d27122e54c34b8a5798.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:200;src:local("Montserrat Extra Light italic"),local("Montserrat-Extra Lightitalic"),url(/static/montserrat-latin-200italic-6e5b3756583bb2263eb062eae992735e.woff2) format("woff2"),url(/static/montserrat-latin-200italic-a0d6f343e4b536c582926255367a57da.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:300;src:local("Montserrat Light "),local("Montserrat-Light"),url(/static/montserrat-latin-300-00b3e893aab5a8fd632d6342eb72551a.woff2) format("woff2"),url(/static/montserrat-latin-300-ea303695ceab35f17e7d062f30e0173b.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:300;src:local("Montserrat Light italic"),local("Montserrat-Lightitalic"),url(/static/montserrat-latin-300italic-56f34ea368f6aedf89583d444bbcb227.woff2) format("woff2"),url(/static/montserrat-latin-300italic-54b0bf2c8c4c12ffafd803be2466a790.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:400;src:local("Montserrat Regular "),local("Montserrat-Regular"),url(/static/montserrat-latin-400-b71748ae4f80ec8c014def4c5fa8688b.woff2) format("woff2"),url(/static/montserrat-latin-400-0659a9f4e90db5cf51b50d005bff1e41.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:400;src:local("Montserrat Regular italic"),local("Montserrat-Regularitalic"),url(/static/montserrat-latin-400italic-6eed6b4cbb809c6efc7aa7ddad6dbe3e.woff2) format("woff2"),url(/static/montserrat-latin-400italic-7583622cfde30ae49086d18447ab28e7.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:500;src:local("Montserrat Medium "),local("Montserrat-Medium"),url(/static/montserrat-latin-500-091b209546e16313fd4f4fc36090c757.woff2) format("woff2"),url(/static/montserrat-latin-500-edd311588712a96bbf435fad264fff62.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:500;src:local("Montserrat Medium italic"),local("Montserrat-Mediumitalic"),url(/static/montserrat-latin-500italic-c90ced68b46050061d1a41842d6dfb43.woff2) format("woff2"),url(/static/montserrat-latin-500italic-5146cbfe02b1deea5dffea27a5f2f998.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:600;src:local("Montserrat SemiBold "),local("Montserrat-SemiBold"),url(/static/montserrat-latin-600-0480d2f8a71f38db8633b84d8722e0c2.woff2) format("woff2"),url(/static/montserrat-latin-600-b77863a375260a05dd13f86a1cee598f.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:600;src:local("Montserrat SemiBold italic"),local("Montserrat-SemiBolditalic"),url(/static/montserrat-latin-600italic-cf46ffb11f3a60d7df0567f8851a1d00.woff2) format("woff2"),url(/static/montserrat-latin-600italic-c4fcfeeb057724724097167e57bd7801.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:700;src:local("Montserrat Bold "),local("Montserrat-Bold"),url(/static/montserrat-latin-700-7dbcc8a5ea2289d83f657c25b4be6193.woff2) format("woff2"),url(/static/montserrat-latin-700-99271a835e1cae8c76ef8bba99a8cc4e.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:700;src:local("Montserrat Bold italic"),local("Montserrat-Bolditalic"),url(/static/montserrat-latin-700italic-c41ad6bdb4bd504a843d546d0a47958d.woff2) format("woff2"),url(/static/montserrat-latin-700italic-6779372f04095051c62ed36bc1dcc142.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:800;src:local("Montserrat ExtraBold "),local("Montserrat-ExtraBold"),url(/static/montserrat-latin-800-db9a3e0ba7eaea32e5f55328ace6cf23.woff2) format("woff2"),url(/static/montserrat-latin-800-4e3c615967a2360f5db87d2f0fd2456f.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:800;src:local("Montserrat ExtraBold italic"),local("Montserrat-ExtraBolditalic"),url(/static/montserrat-latin-800italic-bf45bfa14805969eda318973947bc42b.woff2) format("woff2"),url(/static/montserrat-latin-800italic-fe82abb0bcede51bf724254878e0c374.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:900;src:local("Montserrat Black "),local("Montserrat-Black"),url(/static/montserrat-latin-900-e66c7edc609e24bacbb705175669d814.woff2) format("woff2"),url(/static/montserrat-latin-900-8211f418baeb8ec880b80ba3c682f957.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:900;src:local("Montserrat Black italic"),local("Montserrat-Blackitalic"),url(/static/montserrat-latin-900italic-4454c775e48152c1a72510ceed3603e2.woff2) format("woff2"),url(/static/montserrat-latin-900italic-efcaa0f6a82ee0640b83a0916e6e8d68.woff) format("woff")}.search-input-wrapper{align-items:center;display:none;margin-top:3px;width:180px}@media(min-width:768px){.search-input-wrapper{display:flex}}.search-icon{color:var(--primary-text-color);margin-right:2px}.search-input{height:100%;width:100%}.search-input .MuiAutocomplete-inputRoot{padding-right:0!important}.search-input .MuiInputBase-input{color:var(--primary-text-color)!important;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;font-size:16px;font-weight:500;padding-bottom:2px!important}.search-input .MuiInput-underline:before{border-bottom-color:var(--primary-text-color);border-bottom-width:1px}.search-input .MuiInput-underline:after{border-bottom-color:var(--primary-text-color)}.page-header-wrapper{display:flex;height:60px;justify-content:center;width:100%}.page-header-wrapper .page-header{align-items:center;display:flex;justify-content:space-between;max-width:720px;width:100%}.page-header-wrapper .page-header .link{color:var(--primary-text-color);font-size:17px;font-weight:700}@media(min-width:768px){.page-header-wrapper .page-header .link{font-size:20px;font-weight:700}}.page-header-wrapper .page-header .trailing-section{align-items:center;display:flex}.page-header-wrapper .page-header .trailing-section .link{margin-right:10px}@media(min-width:768px){.page-header-wrapper .page-header .trailing-section .link{margin-right:20px}}.page-footer-wrapper{align-items:center;display:flex;height:62px;justify-content:center;margin-top:auto;width:100%}.page-footer-wrapper .page-footer{max-width:720px;text-align:center;width:100%}.page-footer-wrapper .page-footer .link{color:var(--primary-text-color);font-size:20px;font-weight:700;margin-right:20px}.page-footer-wrapper .page-footer a{color:#3a95ff}.dark-mode-button-wrapper{align-items:center;bottom:20px;display:flex;justify-content:center;position:fixed;right:20px}.dark-mode-button{-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);background-color:#363f47!important;border-radius:50px;box-shadow:0 5px 25px rgba(0,0,0,.12);cursor:pointer;height:50px;width:50px;z-index:3}.dark-mode-icon{color:#fff}a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{border:0;font-size:100%;font:inherit;margin:0;padding:0;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:"";content:none}table{border-collapse:collapse;border-spacing:0}a{outline:none;text-decoration:none}html{--background-color:#fff;--primary-text-color:#000;--secondary-text-color:#9e9e9e;--content-text-color:#37352f;--button-background-color:#f3f3f4;--button-text-color:#363f47;--tab-text-color:#6e6d7a;--tab-hover-text-color:#0d0c22;--tab-selected-background-color:rgba(13,12,34,.05);--bio-link-icon-color:rgba(0,0,0,.54);--about-link-icon-color:#a8a8a8;--chip-background-color:#f3f3f4;--link-text-color:rgba(55,53,47,.7);--post-card-border-color:rgba(0,0,0,.12);--markdown-table-even-cell-background-color:#f6f8fa;--markdown-table-border-color:#dfe2e5;--markdown-blockquote-border-color:#dfe2e5;--markdown-border-color:#e1e4e8}html[data-theme=dark]{--background-color:#232326;--primary-text-color:#e6e6e6;--secondary-text-color:#768390;--content-text-color:#e6e6e6;--button-background-color:#444c56;--button-text-color:#363f47;--tab-text-color:#768390;--tab-hover-text-color:#acbac7;--tab-selected-background-color:#373e47;--chip-background-color:#323a42;--bio-link-icon-color:#e6e6e6;--about-link-icon-color:#a8a8a8;--link-text-color:#90b0ec;--post-card-border-color:#363f47;--markdown-table-even-cell-background-color:#2d333b;--markdown-table-border-color:#444c56;--markdown-blockquote-border-color:#4f5864;--markdown-border-color:#e1e4e8}*{-webkit-appearance:none;appearance:none;box-sizing:border-box}html{font-size:14px;height:100%;overflow-y:scroll;width:100%}body{background-color:var(--background-color)!important}a{color:var(--link-text-color)}.page-wrapper{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:var(--primary-text-color);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;justify-content:center;min-height:100vh;padding-left:15px;padding-right:15px;word-break:keep-all}.page-wrapper,.page-wrapper .page-content{align-items:center;display:flex;flex-direction:column;width:100%}.page-wrapper .page-content{max-width:720px}.icon{color:var(--about-link-icon-color);font-size:20px}.social-links .icon{color:var(--bio-link-icon-color);font-size:30px}@-webkit-keyframes blinking-cursor{0%{opacity:0}50%{opacity:1}to{opacity:0}}@keyframes blinking-cursor{0%{opacity:0}50%{opacity:1}to{opacity:0}}.bio{color:var(--primary-text-color);display:flex;flex-direction:column;justify-content:space-between;margin-bottom:120px;margin-top:120px;width:100%}@media(min-width:768px){.bio{align-items:center;flex-direction:row}}.bio .introduction{display:flex;flex-direction:column;word-break:keep-all}.bio .introduction .react-rotating-text-cursor{-webkit-animation:blinking-cursor .8s cubic-bezier(.68,.01,.01,.99) 0s infinite;animation:blinking-cursor .8s cubic-bezier(.68,.01,.01,.99) 0s infinite}.bio .introduction strong{display:inline-block;font-weight:600}.bio .introduction.korean{font-size:32px;font-weight:100;line-height:1.2}.bio .introduction.korean .title .react-rotating-text-cursor{font-size:35px;line-height:35px}@media(min-width:768px){.bio .introduction.korean{font-size:40px}.bio .introduction.korean .title .react-rotating-text-cursor{font-size:45px;line-height:45px}}.bio .introduction.english{font-family:montserrat;font-size:25px;line-height:1.2}@media(min-width:768px){.bio .introduction.english{font-size:45px}}.bio .introduction.english .name{font-size:35px;font-weight:600}.bio .introduction.english .job{font-size:35px}.bio .introduction.english .description{font-size:20px;font-weight:200;margin-top:8px}.bio .introduction.english .social-links{display:flex;margin-top:20px}.bio .thumbnail-wrapper{display:none}@media(min-width:768px){.bio .thumbnail-wrapper{display:block}}.section-header-wrapper{display:flex;justify-content:center;margin-bottom:32px;width:100%}.section-header-wrapper .section-header{border-bottom:4px solid var(--primary-text-color);color:var(--primary-text-color);font-size:30px;font-weight:700;padding-bottom:5px}.timestamp-section{align-items:center;display:flex;flex-direction:column;justify-content:center;margin-bottom:50px;width:100%;word-break:keep-all}.timestamp-section .body{padding:0 10px;width:100%}.timestamp-section .body .timestamp{border-left:2px solid #bdbdbd;display:flex;font-size:18px;font-weight:400;justify-items:center;margin-left:5px;padding:10px 0;width:100%}.timestamp-section .body .timestamp:first-child{padding-top:7px}.timestamp-section .body .timestamp:last-child{padding-bottom:7px}.timestamp-section .body .timestamp:before{align-self:center;background-color:var(--background-color);border:2px solid #828282;border-radius:10px;content:"";height:10px;left:-1px;position:relative;-webkit-transform:translatex(-50%);transform:translatex(-50%);width:10px}.timestamp-section .body .timestamp .date{align-self:center;color:#828282;margin-left:5px;margin-right:5px;min-width:115px;width:115px}@media(min-width:768px){.timestamp-section .body .timestamp .date{min-width:200px;width:200px}}.timestamp-section .body .timestamp .activity{line-height:23px;width:100%}.project-section{align-items:center;justify-content:center}.project-section,.project-section .project{display:flex;flex-direction:column;width:100%}.project-section .project{margin-bottom:30px;padding:15px}.project-section .project .head{font-size:20px;font-weight:700;line-height:30px;margin-bottom:10px}.project-section .project .body{display:flex;flex-direction:column;width:100%}.project-section .project .body .thumbnail{margin-bottom:10px;width:100%}.project-section .project .body .tech-stack{display:flex;margin-bottom:10px}.project-section .project .body .tech-stack .tech{background-color:var(--chip-background-color);border-radius:10px;font-size:15px;font-weight:500;margin-right:5px;padding:5px 7px}.project-section .project .body .description{font-size:16px;font-weight:400;line-height:1.4}@media(min-width:768px){.project-section .project .body{flex-direction:column}.project-section .project .body .content{margin-top:0}}.post-header{border-bottom:1px solid var(--post-card-border-color);display:flex;flex-direction:column;justify-content:center;margin-bottom:40px;margin-top:20px;padding-bottom:10px;width:100%;word-break:keep-all}.post-header .emoji{font-size:78px;margin-bottom:20px}.post-header .categories{margin-bottom:5px}.post-header .categories .category{color:var(--primary-text-color);font-weight:600;margin-right:4px}.post-header .categories .category:hover{text-decoration:underline}.post-header .title{color:var(--primary-text-color);font-size:32px;font-weight:600;line-height:1.3;margin-bottom:6px}.post-header .info{color:var(--secondary-text-color);display:flex;flex-wrap:wrap;font-size:16px;font-weight:500;line-height:1.5;width:100%}.post-header .info .author{margin-right:4px}.post-header .info strong{color:var(--primary-text-color);font-weight:600}.post-navigator{-webkit-column-gap:1.4%;column-gap:1.4%;display:grid;grid-template-columns:49.3% 49.3%;width:100%}.post-navigator .post-card{border:1px solid var(--post-card-border-color);border-radius:6px;color:var(--primary-text-color);cursor:pointer;display:flex;flex-direction:column;padding:15px;transition:-webkit-transform .2s;transition:transform .2s;transition:transform .2s,-webkit-transform .2s;width:100%}.post-navigator .post-card:hover .title{text-decoration:underline}.post-navigator .post-card.prev{margin-right:auto}.post-navigator .post-card.next{margin-left:auto}.post-navigator .post-card .direction{color:gray;font-size:14px;font-weight:500;margin-bottom:5px}.post-navigator .post-card .title{font-size:16px;font-weight:600;line-height:1.4;margin-bottom:7px}.markdown .octicon{fill:currentColor;display:inline-block;vertical-align:text-bottom}.markdown .anchor{float:left;line-height:1;margin-left:-20px;padding-right:4px}.markdown .anchor:focus{outline:none}.markdown h1 .octicon-link,.markdown h2 .octicon-link,.markdown h3 .octicon-link,.markdown h4 .octicon-link,.markdown h5 .octicon-link,.markdown h6 .octicon-link{color:#1b1f23;vertical-align:middle;visibility:hidden}.markdown h1:hover .anchor,.markdown h2:hover .anchor,.markdown h3:hover .anchor,.markdown h4:hover .anchor,.markdown h5:hover .anchor,.markdown h6:hover .anchor{text-decoration:none}.markdown h1:hover .anchor .octicon-link,.markdown h2:hover .anchor .octicon-link,.markdown h3:hover .anchor .octicon-link,.markdown h4:hover .anchor .octicon-link,.markdown h5:hover .anchor .octicon-link,.markdown h6:hover .anchor .octicon-link{visibility:visible}.markdown h1:hover .anchor .octicon-link:before,.markdown h2:hover .anchor .octicon-link:before,.markdown h3:hover .anchor .octicon-link:before,.markdown h4:hover .anchor .octicon-link:before,.markdown h5:hover .anchor .octicon-link:before,.markdown h6:hover .anchor .octicon-link:before{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' aria-hidden='true' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z'/%3E%3C/svg%3E");content:" ";display:inline-block;height:16px;width:16px}.markdown{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;word-wrap:break-word;color:var(--content-text-color);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;font-size:16px;font-weight:500;line-height:1.5}.markdown details{display:block}.markdown summary{display:list-item}.markdown a{background-color:initial}.markdown a:active,.markdown a:hover{outline-width:0}.markdown strong{font-weight:inherit;font-weight:bolder}.markdown h1{margin:.67em 0}.markdown img{border-style:none}.markdown code,.markdown kbd,.markdown pre{font-family:monospace,monospace;font-size:1em}.markdown hr{box-sizing:initial;overflow:visible}.markdown input{font:inherit;margin:0;overflow:visible}.markdown [type=checkbox]{box-sizing:border-box;padding:0}.markdown *{box-sizing:border-box}.markdown input{font-family:inherit;font-size:inherit;line-height:inherit}.markdown a{border-bottom:.05em solid;border-color:var(--link-text-color);color:var(--link-text-color);text-decoration:none}.markdown a.anchor{border-bottom:none}.markdown strong{font-weight:700}.markdown hr{background:transparent;border-bottom:1px solid var(--markdown-blockquote-border-color);height:0;margin:15px 0;overflow:hidden}.markdown hr:after,.markdown hr:before{content:"";display:table}.markdown hr:after{clear:both}.markdown table{border-collapse:collapse;border-spacing:0}.markdown td,.markdown th{padding:0}.markdown details summary{cursor:pointer}.markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6{margin-bottom:0;margin-top:0}.markdown h1{font-size:32px}.markdown h1,.markdown h2{font-weight:600}.markdown h2{font-size:24px}.markdown h3{font-size:20px}.markdown h3,.markdown h4{font-weight:600}.markdown h4{font-size:16px}.markdown h5{font-size:14px}.markdown h5,.markdown h6{font-weight:600}.markdown h6{font-size:12px}.markdown p{margin-bottom:10px;margin-top:0}.markdown blockquote{margin:0}.markdown ol,.markdown ul{margin-bottom:0;margin-top:0;padding-left:0}.markdown ol ol,.markdown ul ol{list-style-type:lower-roman}.markdown ol ol ol,.markdown ol ul ol,.markdown ul ol ol,.markdown ul ul ol{list-style-type:lower-alpha}.markdown dd{margin-left:0}.markdown code,.markdown pre{font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:12px}.markdown code.language-text{border-radius:3px;font-size:85%;padding:.2em .4em}.markdown :not(pre)>code.language-text{background:hsla(44,6%,50%,.15);color:#eb5757;overflow-wrap:break-word}.markdown pre{margin-bottom:0;margin-top:0}.markdown input::-webkit-inner-spin-button,.markdown input::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}.markdown :checked+.radio-label{border-color:#0366d6;position:relative;z-index:1}.markdown .border{border:1px solid var(--markdown-border-color)!important}.markdown .border-0{border:0!important}.markdown .border-bottom{border-bottom:1px solid var(--markdown-border-color)!important}.markdown .rounded-1{border-radius:3px!important}.markdown .bg-white{background-color:transparent!important}.markdown .bg-gray-light{background-color:#fafbfc!important}.markdown .text-gray-light{color:#6a737d!important}.markdown .pl-3,.markdown .px-3{padding-left:16px!important}.markdown .px-3{padding-right:16px!important}.markdown .f6{font-size:12px!important}.markdown .lh-condensed{line-height:1.25!important}.markdown .text-bold{font-weight:600!important}.markdown .pl-c{color:#6a737d}.markdown .pl-c1,.markdown .pl-s .pl-v{color:#005cc5}.markdown .pl-e,.markdown .pl-en{color:#6f42c1}.markdown .pl-s .pl-s1,.markdown .pl-smi{color:#24292e}.markdown .pl-ent{color:#22863a}.markdown .pl-k{color:#d73a49}.markdown .pl-pds,.markdown .pl-s,.markdown .pl-s .pl-pse .pl-s1,.markdown .pl-sr,.markdown .pl-sr .pl-cce,.markdown .pl-sr .pl-sra,.markdown .pl-sr .pl-sre{color:#032f62}.markdown .pl-smw,.markdown .pl-v{color:#e36209}.markdown .pl-bu{color:#b31d28}.markdown .pl-ii{background-color:#b31d28;color:#fafbfc}.markdown .pl-c2{background-color:#d73a49;color:#fafbfc}.markdown .pl-c2:before{content:"^M"}.markdown .pl-sr .pl-cce{color:#22863a;font-weight:700}.markdown .pl-ml{color:#735c0f}.markdown .pl-mh,.markdown .pl-mh .pl-en,.markdown .pl-ms{color:#005cc5;font-weight:700}.markdown .pl-mi{color:#24292e;font-style:italic}.markdown .pl-mb{color:#24292e;font-weight:700}.markdown .pl-md{background-color:#ffeef0;color:#b31d28}.markdown .pl-mi1{background-color:#f0fff4;color:#22863a}.markdown .pl-mc{background-color:#ffebda;color:#e36209}.markdown .pl-mi2{background-color:#005cc5;color:#f6f8fa}.markdown .pl-mdr{color:#6f42c1;font-weight:700}.markdown .pl-ba{color:#586069}.markdown .pl-sg{color:#959da5}.markdown .pl-corl{color:#032f62;text-decoration:underline}.markdown .mb-0{margin-bottom:0!important}.markdown .my-2{margin-bottom:8px!important;margin-top:8px!important}.markdown .pl-0{padding-left:0!important}.markdown .py-0{padding-bottom:0!important;padding-top:0!important}.markdown .pl-1{padding-left:4px!important}.markdown .pl-2{padding-left:8px!important}.markdown .py-2{padding-bottom:8px!important;padding-top:8px!important}.markdown .pl-3{padding-left:16px!important}.markdown .pl-4{padding-left:24px!important}.markdown .pl-5{padding-left:32px!important}.markdown .pl-6{padding-left:40px!important}.markdown .pl-7{padding-left:48px!important}.markdown .pl-8{padding-left:64px!important}.markdown .pl-9{padding-left:80px!important}.markdown .pl-10{padding-left:96px!important}.markdown .pl-11{padding-left:112px!important}.markdown .pl-12{padding-left:128px!important}.markdown hr{border-bottom-color:#eee}.markdown kbd{background-color:#fafbfc;border:1px solid #d1d5da;border-radius:3px;box-shadow:inset 0 -1px 0 #d1d5da;color:#444d56;display:inline-block;font:11px SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;line-height:10px;padding:3px 5px;vertical-align:middle}.markdown:after,.markdown:before{content:"";display:table}.markdown:after{clear:both}.markdown>:first-child{margin-top:0!important}.markdown>:last-child{margin-bottom:0!important}.markdown a:not([href]){color:inherit;text-decoration:none}.markdown blockquote,.markdown details,.markdown dl,.markdown ol,.markdown p,.markdown pre,.markdown table,.markdown ul{margin-bottom:16px;margin-top:0}.markdown hr{background-color:var(--markdown-border-color);border:0;height:.25em;margin:24px 0;padding:0}.markdown blockquote{border-left:.25em solid var(--markdown-blockquote-border-color);color:#6a737d;padding:0 1em}.markdown blockquote>:first-child{margin-top:0}.markdown blockquote>:last-child{margin-bottom:0}.markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6{font-weight:600;line-height:1.25;margin-bottom:16px;margin-top:24px}.markdown h1{font-size:2em}.markdown h2{font-size:1.5em}.markdown h3{font-size:1.25em}.markdown h4{font-size:1em}.markdown h5{font-size:.875em}.markdown h6{color:#6a737d;font-size:.85em}.markdown ol,.markdown ul{padding-left:2em}.markdown ol ol,.markdown ol ul,.markdown ul ol,.markdown ul ul{margin-bottom:0;margin-top:0}.markdown ol{list-style-type:decimal}.markdown ul{list-style-type:disc}.markdown li{word-wrap:break-all;display:list-item;text-align:-webkit-match-parent}.markdown li>p{margin-top:16px}.markdown li+li{margin-top:.25em}.markdown dl{padding:0}.markdown dl dt{font-size:1em;font-style:italic;font-weight:600;margin-top:16px;padding:0}.markdown dl dd{margin-bottom:16px;padding:0 16px}.markdown table{display:block;overflow:auto;width:100%}.markdown table th{font-weight:600}.markdown table td,.markdown table th{border:1px solid var(--markdown-table-border-color);padding:6px 13px}.markdown table tr{border-top:1px solid var(--markdown-table-border-color)}.markdown table tr:nth-child(2n){background-color:var(--markdown-table-even-cell-background-color)}.markdown img{background-color:transparent;box-sizing:initial;display:block;margin:0 auto;max-width:100%}.markdown img[align=right]{padding-left:20px}.markdown img[align=left]{padding-right:20px}.markdown code{background-color:rgba(27,31,35,.05);border-radius:3px;font-size:85%;margin:0;padding:.2em .4em}.markdown pre{word-wrap:normal}.markdown pre>code{background:transparent;border:0;font-size:100%;margin:0;padding:0;white-space:pre;word-break:normal}.markdown .highlight{margin-bottom:16px}.markdown .highlight pre{margin-bottom:0;word-break:normal}.markdown .highlight pre,.markdown pre{background-color:#f6f8fa;border-radius:3px;font-size:85%;line-height:1.45;overflow:auto;padding:16px}.markdown pre code{word-wrap:normal;background-color:initial;border:0;display:inline;line-height:inherit;margin:0;max-width:auto;overflow:visible;padding:0}.markdown .commit-tease-sha{color:#444d56;display:inline-block;font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:90%}.markdown .full-commit .btn-outline:not(:disabled):hover{border-color:#005cc5;color:#005cc5}.markdown .blob-wrapper{overflow-x:auto;overflow-y:hidden}.markdown .blob-wrapper-embedded{max-height:240px;overflow-y:auto}.markdown .blob-num{color:rgba(27,31,35,.3);cursor:pointer;font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:12px;line-height:20px;min-width:50px;padding-left:10px;padding-right:10px;text-align:right;-webkit-user-select:none;user-select:none;vertical-align:top;white-space:nowrap;width:1%}.markdown .blob-num:hover{color:rgba(27,31,35,.6)}.markdown .blob-num:before{content:attr(data-line-number)}.markdown .blob-code{line-height:20px;padding-left:10px;padding-right:10px;position:relative;vertical-align:top}.markdown .blob-code-inner{word-wrap:normal;color:#24292e;font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:12px;overflow:visible;white-space:pre}.markdown .pl-token.active,.markdown .pl-token:hover{background:#ffea7f;cursor:pointer}.markdown .tab-size[data-tab-size="1"]{-o-tab-size:1;tab-size:1}.markdown .tab-size[data-tab-size="2"]{-o-tab-size:2;tab-size:2}.markdown .tab-size[data-tab-size="3"]{-o-tab-size:3;tab-size:3}.markdown .tab-size[data-tab-size="4"]{-o-tab-size:4;tab-size:4}.markdown .tab-size[data-tab-size="5"]{-o-tab-size:5;tab-size:5}.markdown .tab-size[data-tab-size="6"]{-o-tab-size:6;tab-size:6}.markdown .tab-size[data-tab-size="7"]{-o-tab-size:7;tab-size:7}.markdown .tab-size[data-tab-size="8"]{-o-tab-size:8;tab-size:8}.markdown .tab-size[data-tab-size="9"]{-o-tab-size:9;tab-size:9}.markdown .tab-size[data-tab-size="10"]{-o-tab-size:10;tab-size:10}.markdown .tab-size[data-tab-size="11"]{-o-tab-size:11;tab-size:11}.markdown .tab-size[data-tab-size="12"]{-o-tab-size:12;tab-size:12}.markdown .task-list-item{list-style-type:none}.markdown .task-list-item+.task-list-item{margin-top:3px}.markdown .task-list-item input{margin:0 .2em .25em -1.6em;vertical-align:middle}.markdown .table-of-contents{align-items:flex-start;display:flex;flex-direction:column;justify-content:center;position:fixed;right:0;top:75px;width:340px}@media(max-width:1300px){.markdown .table-of-contents{display:none}}.markdown .table-of-contents ul{cursor:pointer;list-style-type:none}.markdown .table-of-contents ul li a{border-bottom:none;color:var(--secondary-text-color);font-size:14px;height:30px;padding:6px 2px;width:100%}.markdown .table-of-contents ul p{margin:0}.markdown .gatsby-resp-image-wrapper{display:flex!important;justify-content:center!important;max-height:560px!important;width:100%!important}.markdown .gatsby-resp-image-wrapper img{height:auto!important;max-height:560px!important;max-width:100%!important;position:relative!important;width:auto!important}.markdown .gatsby-resp-image-wrapper+em{color:#6a737d;display:block;font-size:15px;font-style:italic;text-align:center}code[class*=language-],pre[class*=language-]{word-wrap:normal;background:none;color:#ccc;font-family:Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;font-size:1em;-webkit-hyphens:none;hyphens:none;line-height:1.5;-o-tab-size:4;tab-size:4;text-align:left;white-space:pre;word-break:normal;word-spacing:normal}pre[class*=language-]{margin:.5em 0;overflow:auto;padding:1em}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{border-radius:.3em;padding:.1em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}.post-content{margin-bottom:20px;width:100%}.category-page-header-wrapper,.post-content{display:flex;flex-direction:column;justify-content:center}.category-page-header-wrapper{align-items:center;margin-bottom:30px;margin-top:30px}.category-page-header-wrapper .category-page-title{border-bottom:3px solid var(--primary-text-color);font-size:40px;font-weight:700;margin-bottom:15px;padding-bottom:7px;text-align:center;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}.category-page-header-wrapper .category-page-subtitle{font-size:20px;font-weight:500;padding-bottom:10px;text-align:center}.post-card-wrapper{display:flex;justify-content:center;min-height:150px;width:100%}.post-card-wrapper .post-card{border:1px solid var(--post-card-border-color);border-radius:6px;color:var(--primary-text-color);cursor:pointer;display:flex;flex-direction:column;height:100%;margin-bottom:15px;max-width:720px;padding:15px;transition:-webkit-transform .2s;transition:transform .2s;transition:transform .2s,-webkit-transform .2s;width:100%}.post-card-wrapper .post-card:hover .title{text-decoration:underline}@media(min-width:768px){.post-card-wrapper .post-card{margin-bottom:0}}.post-card-wrapper .post-card .title{font-size:18px;font-weight:600;line-height:1.4;margin-bottom:7px}.post-card-wrapper .post-card .description{-webkit-line-clamp:3;-webkit-box-orient:vertical;color:var(--primary-text-color);display:-webkit-box;font-size:13px;line-height:20px;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis}.post-card-wrapper .post-card .info{color:var(--about-link-icon-color);display:flex;font-size:14px;justify-content:space-between;margin-top:auto}.post-card-wrapper .post-card .info .categories{display:flex}.post-card-wrapper .post-card .info .categories .category{margin-left:4px}.post-card-wrapper .post-card .info .categories .category:hover{text-decoration:underline}.post-card-column-wrapper{display:flex;justify-content:center;width:100%}.post-card-column-wrapper .post-card-column{align-items:center;display:flex;flex-direction:column;width:100%}.post-card-column-wrapper .post-card-column .post-card-wrapper{margin-bottom:10px}.post-card-column-wrapper .post-card-column .more-post-card-button{background-color:var(--button-background-color);color:var(--tab-hover-text-color);font-size:15px;font-weight:500;height:40px}.post-tabs-wrapper{align-self:flex-start;display:flex;flex-direction:column;justify-content:center;top:0;width:100%}.post-tabs-wrapper .post-tabs{display:flex;height:40px;justify-content:center;margin-bottom:12px;max-width:760px;width:100%}.post-tabs-wrapper .post-tabs .mui-tabs .MuiTab-root{color:var(--tab-text-color);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;font-size:17px;font-weight:500;height:40px;min-height:auto;min-width:auto;padding:10px 12px;transition:all .2s ease}.post-tabs-wrapper .post-tabs .mui-tabs .Mui-selected,.post-tabs-wrapper .post-tabs .mui-tabs .MuiTab-root :hover{color:var(--tab-hover-text-color);transition:all .2s ease}.post-tabs-wrapper .post-tabs .mui-tabs .Mui-selected{background-color:var(--tab-selected-background-color);border-radius:8px;font-weight:600}.post-tabs-wrapper .post-tabs .mui-tabs .MuiTabScrollButton-root{height:40px;width:20px}.post-tabs-wrapper .post-tabs .mui-tabs .MuiTabs-scrollable{height:40px}.post-tabs-wrapper .post-tabs .mui-tabs .MuiTabs-indicator{display:none}</style><style data-emotion="css-global o6gwfi">html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;box-sizing:border-box;-webkit-text-size-adjust:100%;}*,*::before,*::after{box-sizing:inherit;}strong,b{font-weight:700;}body{margin:0;color:rgba(0, 0, 0, 0.87);font-family:"Roboto","Helvetica","Arial",sans-serif;font-weight:400;font-size:1rem;line-height:1.5;letter-spacing:0.00938em;background-color:#fff;}@media print{body{background-color:#fff;}}body::backdrop{background-color:#fff;}</style><style data-emotion="css-global 1prfaxn">@-webkit-keyframes mui-auto-fill{from{display:block;}}@keyframes mui-auto-fill{from{display:block;}}@-webkit-keyframes mui-auto-fill-cancel{from{display:block;}}@keyframes mui-auto-fill-cancel{from{display:block;}}</style><style data-emotion="css 18nc3u2 feqhe6 12rx5qu mnn31 vubbuv 1yxmbwk 6flbmm">.css-18nc3u2.Mui-focused .MuiAutocomplete-clearIndicator{visibility:visible;}@media (pointer: fine){.css-18nc3u2:hover .MuiAutocomplete-clearIndicator{visibility:visible;}}.css-18nc3u2 .MuiAutocomplete-tag{margin:3px;max-width:calc(100% - 6px);}.css-18nc3u2 .MuiAutocomplete-inputRoot{-webkit-box-flex-wrap:wrap;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;}.MuiAutocomplete-hasPopupIcon.css-18nc3u2 .MuiAutocomplete-inputRoot,.MuiAutocomplete-hasClearIcon.css-18nc3u2 .MuiAutocomplete-inputRoot{padding-right:30px;}.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-18nc3u2 .MuiAutocomplete-inputRoot{padding-right:56px;}.css-18nc3u2 .MuiAutocomplete-inputRoot .MuiAutocomplete-input{width:0;min-width:30px;}.css-18nc3u2 .MuiInput-root{padding-bottom:1px;}.css-18nc3u2 .MuiInput-root .MuiInput-input{padding:4px 4px 4px 0px;}.css-18nc3u2 .MuiInput-root.MuiInputBase-sizeSmall .MuiInput-input{padding:2px 4px 3px 0;}.css-18nc3u2 .MuiOutlinedInput-root{padding:9px;}.MuiAutocomplete-hasPopupIcon.css-18nc3u2 .MuiOutlinedInput-root,.MuiAutocomplete-hasClearIcon.css-18nc3u2 .MuiOutlinedInput-root{padding-right:39px;}.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-18nc3u2 .MuiOutlinedInput-root{padding-right:65px;}.css-18nc3u2 .MuiOutlinedInput-root .MuiAutocomplete-input{padding:7.5px 4px 7.5px 5px;}.css-18nc3u2 .MuiOutlinedInput-root .MuiAutocomplete-endAdornment{right:9px;}.css-18nc3u2 .MuiOutlinedInput-root.MuiInputBase-sizeSmall{padding-top:6px;padding-bottom:6px;padding-left:6px;}.css-18nc3u2 .MuiOutlinedInput-root.MuiInputBase-sizeSmall .MuiAutocomplete-input{padding:2.5px 4px 2.5px 8px;}.css-18nc3u2 .MuiFilledInput-root{padding-top:19px;padding-left:8px;}.MuiAutocomplete-hasPopupIcon.css-18nc3u2 .MuiFilledInput-root,.MuiAutocomplete-hasClearIcon.css-18nc3u2 .MuiFilledInput-root{padding-right:39px;}.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-18nc3u2 .MuiFilledInput-root{padding-right:65px;}.css-18nc3u2 .MuiFilledInput-root .MuiFilledInput-input{padding:7px 4px;}.css-18nc3u2 .MuiFilledInput-root .MuiAutocomplete-endAdornment{right:9px;}.css-18nc3u2 .MuiFilledInput-root.MuiInputBase-sizeSmall{padding-bottom:1px;}.css-18nc3u2 .MuiFilledInput-root.MuiInputBase-sizeSmall .MuiFilledInput-input{padding:2.5px 4px;}.css-18nc3u2 .MuiInputBase-hiddenLabel{padding-top:8px;}.css-18nc3u2 .MuiFilledInput-root.MuiInputBase-hiddenLabel{padding-top:0;padding-bottom:0;}.css-18nc3u2 .MuiFilledInput-root.MuiInputBase-hiddenLabel .MuiAutocomplete-input{padding-top:16px;padding-bottom:17px;}.css-18nc3u2 .MuiFilledInput-root.MuiInputBase-hiddenLabel.MuiInputBase-sizeSmall .MuiAutocomplete-input{padding-top:8px;padding-bottom:9px;}.css-18nc3u2 .MuiAutocomplete-input{-webkit-box-flex:1;-webkit-flex-grow:1;-ms-flex-positive:1;flex-grow:1;text-overflow:ellipsis;opacity:1;}.css-feqhe6{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;position:relative;min-width:0;padding:0;margin:0;border:0;vertical-align:top;width:100%;}.css-12rx5qu{font-family:"Roboto","Helvetica","Arial",sans-serif;font-weight:400;font-size:1rem;line-height:1.4375em;letter-spacing:0.00938em;color:rgba(0, 0, 0, 0.87);box-sizing:border-box;position:relative;cursor:text;display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;width:100%;position:relative;}.css-12rx5qu.Mui-disabled{color:rgba(0, 0, 0, 0.38);cursor:default;}label+.css-12rx5qu{margin-top:16px;}.css-12rx5qu:after{border-bottom:2px solid #1976d2;left:0;bottom:0;content:"";position:absolute;right:0;-webkit-transform:scaleX(0);-moz-transform:scaleX(0);-ms-transform:scaleX(0);transform:scaleX(0);-webkit-transition:-webkit-transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;transition:transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;pointer-events:none;}.css-12rx5qu.Mui-focused:after{-webkit-transform:scaleX(1) translateX(0);-moz-transform:scaleX(1) translateX(0);-ms-transform:scaleX(1) translateX(0);transform:scaleX(1) translateX(0);}.css-12rx5qu.Mui-error:before,.css-12rx5qu.Mui-error:after{border-bottom-color:#d32f2f;}.css-12rx5qu:before{border-bottom:1px solid rgba(0, 0, 0, 0.42);left:0;bottom:0;content:"\00a0";position:absolute;right:0;-webkit-transition:border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;pointer-events:none;}.css-12rx5qu:hover:not(.Mui-disabled, .Mui-error):before{border-bottom:2px solid rgba(0, 0, 0, 0.87);}@media (hover: none){.css-12rx5qu:hover:not(.Mui-disabled, .Mui-error):before{border-bottom:1px solid rgba(0, 0, 0, 0.42);}}.css-12rx5qu.Mui-disabled:before{border-bottom-style:dotted;}.css-mnn31{font:inherit;letter-spacing:inherit;color:currentColor;padding:4px 0 5px;border:0;box-sizing:content-box;background:none;height:1.4375em;margin:0;-webkit-tap-highlight-color:transparent;display:block;min-width:0;width:100%;-webkit-animation-name:mui-auto-fill-cancel;animation-name:mui-auto-fill-cancel;-webkit-animation-duration:10ms;animation-duration:10ms;}.css-mnn31::-webkit-input-placeholder{color:currentColor;opacity:0.42;-webkit-transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;}.css-mnn31::-moz-placeholder{color:currentColor;opacity:0.42;-webkit-transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;}.css-mnn31:-ms-input-placeholder{color:currentColor;opacity:0.42;-webkit-transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;}.css-mnn31::-ms-input-placeholder{color:currentColor;opacity:0.42;-webkit-transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;}.css-mnn31:focus{outline:0;}.css-mnn31:invalid{box-shadow:none;}.css-mnn31::-webkit-search-decoration{-webkit-appearance:none;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31::-webkit-input-placeholder{opacity:0!important;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31::-moz-placeholder{opacity:0!important;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31:-ms-input-placeholder{opacity:0!important;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31::-ms-input-placeholder{opacity:0!important;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31:focus::-webkit-input-placeholder{opacity:0.42;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31:focus::-moz-placeholder{opacity:0.42;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31:focus:-ms-input-placeholder{opacity:0.42;}label[data-shrink=false]+.MuiInputBase-formControl .css-mnn31:focus::-ms-input-placeholder{opacity:0.42;}.css-mnn31.Mui-disabled{opacity:1;-webkit-text-fill-color:rgba(0, 0, 0, 0.38);}.css-mnn31:-webkit-autofill{-webkit-animation-duration:5000s;animation-duration:5000s;-webkit-animation-name:mui-auto-fill;animation-name:mui-auto-fill;}.css-vubbuv{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;fill:currentColor;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;font-size:1.5rem;}.css-1yxmbwk{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center;position:relative;box-sizing:border-box;-webkit-tap-highlight-color:transparent;background-color:transparent;outline:0;border:0;margin:0;border-radius:0;padding:0;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;vertical-align:middle;-moz-appearance:none;-webkit-appearance:none;-webkit-text-decoration:none;text-decoration:none;color:inherit;text-align:center;-webkit-flex:0 0 auto;-ms-flex:0 0 auto;flex:0 0 auto;font-size:1.5rem;padding:8px;border-radius:50%;overflow:visible;color:rgba(0, 0, 0, 0.54);-webkit-transition:background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;}.css-1yxmbwk::-moz-focus-inner{border-style:none;}.css-1yxmbwk.Mui-disabled{pointer-events:none;cursor:default;}@media print{.css-1yxmbwk{-webkit-print-color-adjust:exact;color-adjust:exact;}}.css-1yxmbwk:hover{background-color:rgba(0, 0, 0, 0.04);}@media (hover: none){.css-1yxmbwk:hover{background-color:transparent;}}.css-1yxmbwk.Mui-disabled{background-color:transparent;color:rgba(0, 0, 0, 0.26);}.css-6flbmm{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;width:1em;height:1em;display:inline-block;fill:currentColor;-webkit-flex-shrink:0;-ms-flex-negative:0;flex-shrink:0;-webkit-transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;transition:fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;font-size:2.1875rem;}</style><link rel="preconnect" href="https://www.google-analytics.com"/><link rel="dns-prefetch" href="https://www.google-analytics.com"/><script>
+  
+  function gaOptout(){document.cookie=disableStr+'=true; expires=Thu, 31 Dec 2099 23:59:59 UTC;path=/',window[disableStr]=!0}var gaProperty='G-Y2TNPV9C3Z',disableStr='ga-disable-'+gaProperty;document.cookie.indexOf(disableStr+'=true')>-1&&(window[disableStr]=!0);
+  if(true) {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  }
+  if (typeof ga === "function") {
+    ga('create', 'G-Y2TNPV9C3Z', 'auto', {});
+      ga('set', 'anonymizeIp', true);
+      
+      
+      
+      
+      }</script><link rel="icon" href="/favicon-32x32.png?v=a4a2f53822680309c3d24ddfc3d00720" type="image/png"/><link rel="manifest" href="/manifest.webmanifest" crossorigin="anonymous"/><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png?v=a4a2f53822680309c3d24ddfc3d00720"/><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png?v=a4a2f53822680309c3d24ddfc3d00720"/><style type="text/css">
+    .anchor.before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateX(-100%);
+      padding-right: 4px;
+    }
+    .anchor.after {
+      display: inline-block;
+      padding-left: 4px;
+    }
+    h1 .anchor svg,
+    h2 .anchor svg,
+    h3 .anchor svg,
+    h4 .anchor svg,
+    h5 .anchor svg,
+    h6 .anchor svg {
+      visibility: hidden;
+    }
+    h1:hover .anchor svg,
+    h2:hover .anchor svg,
+    h3:hover .anchor svg,
+    h4:hover .anchor svg,
+    h5:hover .anchor svg,
+    h6:hover .anchor svg,
+    h1 .anchor:focus svg,
+    h2 .anchor:focus svg,
+    h3 .anchor:focus svg,
+    h4 .anchor:focus svg,
+    h5 .anchor:focus svg,
+    h6 .anchor:focus svg {
+      visibility: visible;
+    }
+  </style><script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      var hash = window.decodeURI(location.hash.replace('#', ''))
+      if (hash !== '') {
+        var element = document.getElementById(hash)
+        if (element) {
+          var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+          var clientTop = document.documentElement.clientTop || document.body.clientTop || 0
+          var offset = element.getBoundingClientRect().top + scrollTop - clientTop
+          // Wait for the browser to finish rendering before scrolling.
+          setTimeout((function() {
+            window.scrollTo(0, offset - 0)
+          }), 0)
+        }
+      }
+    })
+  </script><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2"/><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2"/><link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href="/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2"/><style>@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:300;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:400;src:url(/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:500;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2) format("woff2")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:300;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc-.woff) format("woff")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:400;src:url(/static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxM.woff) format("woff")}@font-face{font-display:swap;font-family:Roboto;font-style:normal;font-weight:500;src:url(/static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc-.woff) format("woff")}</style><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper picture.object-fit-polyfill{position:static!important}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){const t=e.target;if(void 0===t.dataset.mainImage)return;if(void 0===t.dataset.gatsbyImageSsr)return;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script><title data-react-helmet="true">[CKS] Microservice 취약성</title></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="page-wrapper"><header class="page-header-wrapper"><div class="page-header"><div class="front-section"><a class="link" href="/">Steady and Slow</a></div><div class="trailing-section"><a class="link" href="/posts">posts</a><div class="MuiAutocomplete-root MuiAutocomplete-hasPopupIcon css-18nc3u2"><div class="search-input-wrapper"><div class="MuiFormControl-root MuiFormControl-fullWidth MuiTextField-root search-input css-feqhe6"><div class="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl MuiInputBase-adornedEnd MuiAutocomplete-inputRoot css-12rx5qu"><input type="text" aria-invalid="false" autoComplete="off" value="" class="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd MuiAutocomplete-input MuiAutocomplete-inputFocused css-mnn31" aria-autocomplete="list" aria-expanded="false" autoCapitalize="none" spellcheck="false" role="combobox"/><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium search-icon css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="SearchOutlinedIcon"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg></div></div></div></div></div></div></header><main class="page-content"><header class="post-header"><div class="emoji">🧢</div><div class="info"><div class="categories"><a class="category" href="/posts/DevOps">DevOps</a></div></div><h1 class="title">[CKS] Microservice 취약성</h1><div class="info"><div class="author">posted by <strong>jjunyong</strong>,</div> <!-- -->October 15, 2023</div></header><div class="post-content"><div class="markdown"><h3 id="security-context" style="position:relative;"><a href="#security-context" aria-label="security context permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Security context</h3>
+<ul>
+<li>
+<p>컨테이너를 실행할 때 하기와 같이 어떤 유저로 실행할지, 어떤 capability를 추가하거나 뺼 지 등 보안 설정을 할 수 있다.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">docker run --user=1001 ubuntu sleep 100
+docker run --cap-add MAC_ADMIN ubuntu</code></pre></div>
+</li>
+<li>
+<p>이는 k8s pod definition에서도 Security context 절을 통해 설정할 수 있는데, pod 레벨에서 설정하면 pod 내의 모든 컨테이너에 적용되고 컨테이너 레벨에서 설정을 하면 그 설정으로 override된다.</p>
+</li>
+<li>
+<p>Pod 레벨 예시
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 77.22222222222223%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAABYlAAAWJQFJUiTwAAABpklEQVQ4y42U627bMAyF/TatJJK62ZJvSYMuadEW69oOw97/Sc4geQkSDEv8g5AEE58OySM325bwfWS8j4LXgfGcCI8dwVlBbBOICMaY1dEU4M+N4JAMoveYxwld8DBag5lrktZ6dTT7zPjaSFV5yIJd8hWilIJS9zXpCF2lUMhgDoTfDwVKSN6iHya0bULKA0KIFX4Ncn5p09nSw9I/QbQGmhg+tLAuwPkIFntT5QUwO8JTZrQFpg2ENMQosFEgvazG6NXQRmmNp0x46QmvA9VJ/5gYLz3jcxZ8bByik3pZAd9UWDZkDPZpGc7XbKuFypCcEEKXa0/lrPSrCv/9cH6+tMT/Sr5QWAD3SuNO6boe41avripMjjB4QnLmFMVOVZlSS6xU2ZT+PSbCIRP2WfDcC94nxq5dnpy1rgaLrDL4Rcl3mtBawudcJi2IYtCPG8ybXTV5AV97dn9LXjZFabFQMffbyPV9P0SD4D3GaYvc9wgxLrm8qGemumfh+hM52eZIr0Ax1TK/toyPmfGtKwCB8xYuCGLnYb0Fs8B6gW8dfHAn9X8AlN/OV+VyK4YAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image1"
+        title="image1"
+        src="/static/ad136c4da4381b5c89167a699212d00a/37523/image1.png"
+        srcset="/static/ad136c4da4381b5c89167a699212d00a/e9ff0/image1.png 180w,
+/static/ad136c4da4381b5c89167a699212d00a/f21e7/image1.png 360w,
+/static/ad136c4da4381b5c89167a699212d00a/37523/image1.png 720w,
+/static/ad136c4da4381b5c89167a699212d00a/302a4/image1.png 1080w,
+/static/ad136c4da4381b5c89167a699212d00a/d7e70/image1.png 1286w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+</li>
+<li>
+<p>Container 레벨 예시
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 42.77777777777778%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABYlAAAWJQFJUiTwAAAB/0lEQVQoz1WRX0/TUByG+y1IhnC9tqdd25XBhA2qEaIxoh/KC+IMyA0fwHu/gIm3xhuvJAFB+edStrbr6Vm3gbt4TAsu4STP7XN+7/tqb561ebUZsPVknY2NgFarRbvdnhEEAbVajYODA4qXpilKKWQ0QPZihlFCEkbIeIDMMrTtps7TpoctTHRdp1qtPsA0Tebm5uh0OndCKVGJLAXdWPL9rE+SSpLrGDlI0TaXBb5jY7s+Xt1HCFFK/lNcNz8/z+7ubinMsgwVp6RSkcoRhxeSfJgTFRf2E7TAF6x6FmueQAjzgazAtm0qlcpMqIaKfJCRpIrLuMtlfMZVHJIkGTJK0CzTwHcsXqwIGq5NvdHE9Xx03cAwjJlwb2+vFA7zIaNsSJpIPh1+Zv/rR76cfGMYKdIiclXXEabJ6zWbl48tGn6d5YaP61gIy8KruywuLsyEeZ4znozJU8VtOmEqbxjFiixJyZRCK4awhEmwZPF8xaLodN0XNJc8TCHuO6zwYX+/FE5uJkynU27/3jIej8oP8tEdmcrQDEOnqhs0HJPtVZutFYv1JYu669wL7XKU9zudct1eN+T6T0gU9omv+/TDHuFVl6QXM1Z5ITTK8ovYy46g5Vt4bg3Hsag5dhn50eIC797u0LsIOflxXHJ+9Ivz498lp4c/uTq9IDzv8g/SVdU92A1u1QAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image2"
+        title="image2"
+        src="/static/7e11f9fff65e88b6472bd21cf3fc2002/37523/image2.png"
+        srcset="/static/7e11f9fff65e88b6472bd21cf3fc2002/e9ff0/image2.png 180w,
+/static/7e11f9fff65e88b6472bd21cf3fc2002/f21e7/image2.png 360w,
+/static/7e11f9fff65e88b6472bd21cf3fc2002/37523/image2.png 720w,
+/static/7e11f9fff65e88b6472bd21cf3fc2002/302a4/image2.png 1080w,
+/static/7e11f9fff65e88b6472bd21cf3fc2002/07a9c/image2.png 1440w,
+/static/7e11f9fff65e88b6472bd21cf3fc2002/59058/image2.png 2376w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+</li>
+<li>
+<p><code class="language-text">kubectl exec &lt;pod명> -- whoami</code> 명령을 통해 특정 pod를 실행시키고 있는 user가 무엇인지 알 수 있다.</p>
+</li>
+</ul>
+<h3 id="admission-controller" style="position:relative;"><a href="#admission-controller" aria-label="admission controller permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Admission controller</h3>
+<p>admission controller는 authentication/authorization 단계에서 수행할 수 없는 보안조치를 위한 부가적인 기능들을 제공한다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 38.33333333333333%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAABYlAAAWJQFJUiTwAAACDUlEQVQoz12SvU9TYRSH77/h5D8gaggCGlETw8CAxMlFVxc3F02gKGEx6iodSBEWY1ggSJSYAkqLvdx+AKUlxQI20Es/7vveL6q29KaP6dXJkzw5OcnJ7yQnj+I4DpZlYRgGQgiElEgpMU3zH5bf/R0heRc7YGZ9n+lInplonlKlihAGVcPwM5RwOEwqlaRWq/lBjm3hOjaOY2PZNqeuw6nj8OvUpVgRnB9bo+OVyuXXKueerbF/XMK1TKSQmEKiDA4OMTwcoHnW8C/oFYFekRjS9MMqwuTEsDBth+OKZHQ2QXBhw2fkfZzDYhkhqxyVihTLOsrdgSfcGwqwuKgxrR3RP5GgP5hi+MMeWwWDO5Mp+ifiDAQ1ZtUDQqtZYjs51tM5QitZFhMHPA2/5P7CYx4sPEaJRDTabGibrKd2WIpt8Sm2yVoyw/bunj8n80VyuiSnCx69WCIwNs/I8zkejn8kUyiT1/fZLmTZKmRQOi90cKPnKn1dPfR1XuF27zVudXVzs7uX61099F68ROTLKu3Shc34VJTQ1DKht8uMTUb4UTJo1H7iWi6u5aBEv0ZQv8XYiKnEVQ1N1UjGEz6pRNKnaghanseJcBidT/Pmc5pgOENgLs2hXvV/3bajbYlSb9RpNBo0m02anker1eL/8jyPs7MGv+t1ot/LLO+WCGdOWMkWsWznrxGW5VvyB8y6FiCBDH8kAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image3"
+        title="image3"
+        src="/static/67e87f7d610c9155e62460adccf2f041/37523/image3.png"
+        srcset="/static/67e87f7d610c9155e62460adccf2f041/e9ff0/image3.png 180w,
+/static/67e87f7d610c9155e62460adccf2f041/f21e7/image3.png 360w,
+/static/67e87f7d610c9155e62460adccf2f041/37523/image3.png 720w,
+/static/67e87f7d610c9155e62460adccf2f041/302a4/image3.png 1080w,
+/static/67e87f7d610c9155e62460adccf2f041/07a9c/image3.png 1440w,
+/static/67e87f7d610c9155e62460adccf2f041/49832/image3.png 2374w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<p>NamespaceExists와 같은 모듈은 디폴트로 적용되어 있어서 pod가 생성될 namespace가 실제 존재하는지 체크하고, NamespaceAutoProvision과 같은 모듈을 Enable하면 namespace가 존재하지 않는다면 생성하도록 설정된다.
+아래 명령을 통해 디폴트로 어떤 admission controller가 적용되어 있는 지 확인 할 수 있다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 30.555555555555554%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAYAAADDl76dAAAACXBIWXMAABYlAAAWJQFJUiTwAAABj0lEQVQY0zXKW2/SABjG8SZcuHgxFncqbS0WmI7BgHn4AGpSmCsJ8Uq9MG60wLolJkBH0C9hOixNDyYu4XBj5pVe+dn+xhIvnvze580jtN69pvmqSdNoctw4xjgxMAyDul6n1Wqh13XG40/c/rxlNp+zWC6ZLxYr//XfS+Z/Fsx+zbj5cYNQfFtC+1hAu9hDPlfRLguo5xq7ZxJqVyNzpqB1C2TNHFlLQ2lnkU4VHlh55LaK2JaRTZX1lxsI6wLC0zfPqFg1auYTiu/LHHwoUzFrlE+r7OkPOaxXKOmH7D8vUtbLVBtVao0jDl6UODp5TK6SJ5/Lk95Kk0qlEPZzj8jJGvdFFfGeiLiZSe7MZgZ5W165o6DsKEhbUvLbuJtG2paSvbQrs3ZnDUEQVhl/HuM4DkPHYTQa0e/36Q8Gif/7YDDEubpKNsOhQ6/Xw76wsW2bbrdLp9PBsixM00KYfg9wv7hcT66ZTCZ4Xz08z8Of+onT6RTf95PE8TeiMCIIAuIoIo7ixDAMCYMQ13X5C/2875CIzBGdAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image4"
+        title="image4"
+        src="/static/0fff33b867d286b96ef2059744dadf47/37523/image4.png"
+        srcset="/static/0fff33b867d286b96ef2059744dadf47/e9ff0/image4.png 180w,
+/static/0fff33b867d286b96ef2059744dadf47/f21e7/image4.png 360w,
+/static/0fff33b867d286b96ef2059744dadf47/37523/image4.png 720w,
+/static/0fff33b867d286b96ef2059744dadf47/302a4/image4.png 1080w,
+/static/0fff33b867d286b96ef2059744dadf47/07a9c/image4.png 1440w,
+/static/0fff33b867d286b96ef2059744dadf47/63908/image4.png 2410w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<p>admission controller를 추가/제거 하기 위해서는 아래와 같이 kube-apiserver의 yaml파일에 작성해주면 된다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 35.55555555555556%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAACXBIWXMAABYlAAAWJQFJUiTwAAABp0lEQVQoz3XPy2oaARTG8VE7gs1CjRohULWjndHOJfEeTZBm1V26aHERNfYBuujK26ozLpJFKX0Bl7powI3iJSQ+QPNALQr5FxWELHrgx9l93zlCu92m2WzSaDTodDoMBgOGwyH9fn/n1+0tP398p2t+w+p2MU0Ly7IwTXOj1WrR6/WYz+cIXq+XcDhMJBIhFArh8Xiw2WwIgrDjeCFSymgUDBk1LqPIb4jGYkSj0R1JkjaEYDCIcWSgahpSVGJd4BSd2O12HA7HJtDj3ee8mOX9iU4xlyaXzaLrBqqqomnaM8KBL4CqqCTkBKHDV/i8+7jdbkRR3F26Link0pQyBqlkEk0z0HV9G/pW3VK3WxDdTgLxA3wxPz7Zj/8wwN7LvWcvu1wukqkUyXSG07MShdMz8oUi2Vyeo+PjzWXrAk3TET5++UTl5opLq0LlusbV1zq1yxr1z3XK5TIXHy6oVqvkTjK8zgeRzuWN8LsYsayCqhrE4wkUJY4sKwjLv0tWf1Y8LZ9gxX/n8fE3i7s5i4cF9/cPzGd3zKYzptMpk8mE8XjMaDTiH3IoDfs4O1p+AAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image5"
+        title="image5"
+        src="/static/4e09a8246fc8797bf889a5594d662eb8/37523/image5.png"
+        srcset="/static/4e09a8246fc8797bf889a5594d662eb8/e9ff0/image5.png 180w,
+/static/4e09a8246fc8797bf889a5594d662eb8/f21e7/image5.png 360w,
+/static/4e09a8246fc8797bf889a5594d662eb8/37523/image5.png 720w,
+/static/4e09a8246fc8797bf889a5594d662eb8/302a4/image5.png 1080w,
+/static/4e09a8246fc8797bf889a5594d662eb8/07a9c/image5.png 1440w,
+/static/4e09a8246fc8797bf889a5594d662eb8/91a65/image5.png 2476w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<p>NamespaceAutoProvision, NamespaceExists 는 deprecated되었고 NamespaceLifecycle 로 대체되었다. 이는 존재하지 않는 ns 에 대한 request는 reject하고 default로 설정되는 ns는 삭제 되지 않도록 해준다.</p>
+<h4 id="admission-controller의-종류" style="position:relative;"><a href="#admission-controller%EC%9D%98-%EC%A2%85%EB%A5%98" aria-label="admission controller의 종류 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Admission controller의 종류</h4>
+<ul>
+<li>Validating Admission controller : NamespaceExists와 같이 request에 대한 유효성을 검사하는 admission controller</li>
+<li>Mutating Admission controller : defaultStorageClass와 같이 request를 조작하여 default storageclass 등을 부여하는 admission controller</li>
+<li>검증/조작 둘다 하는 것들도 있다.</li>
+</ul>
+<h4 id="admission-webhook" style="position:relative;"><a href="#admission-webhook" aria-label="admission webhook permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Admission webhook</h4>
+<p><a href="https://coffeewhale.com/kubernetes/admission-control/2021/04/28/opa1/">https://coffeewhale.com/kubernetes/admission-control/2021/04/28/opa1/</a></p>
+<ul>
+<li>webhook 서버 ( Dynamic admissoin controller ) 만들기
+<ul>
+<li>webhook 서버를 위한 tls type의 secret 만들기
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">kubectl -n webhook-demo create secret tls webhook-server-tls \
+    --cert "/root/keys/webhook-server-tls.crt" \
+    --key "/root/keys/webhook-server-tls.key"</code></pre></div>
+</li>
+</ul>
+</li>
+<li>validatingWebHookConfiguration은 api-server로 들어오는 요청을 webhook service로 전달해주기 위한 역할을 하며 어떤 request에 대해 webhook 서버로 보낼지에 대한 설정을 한다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 48.888888888888886%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABYlAAAWJQFJUiTwAAACb0lEQVQoz12SzUtUcRSG518IQp2smRLmfvzux3hnRgMLI0RomwsXIWQxc6c2/QtBNc64aNUuiJBaRAStojYSLURFaiGRyowJQqjzce+dOx9qpk/MnVrUgZdzVg/vy3tCu3tlOqpVyjjVMuVyhb1yhZ3dPZqtNi/mnjM1eZ3s7Ztk0mmy2TvYto2dtcnYmUDpdJqpqSlmC7OEOrB23eHtyhb3Xq/iey7Vao1ypcL+4RGFh/cxo6cZScUx4yZWMsGgNUh8MB5swzSQJIlwOMz09C1C1VqNys4PXs2vMPNmka2tLTzXxanVODz6RWEmR0rqZyRlIgsVoSmoQkHo3VtWZGRZJhqNcveOTchxanzb3MaeW+bakwXerRTx6x6O43B0fEIul0OcDzOcMIibAi0AdaVqagCTJJmBCxHGJ2xChw2Xpx/XiOUXkWeXmXz2mZ8tH8f1OD6Bh49yRPv7GE1qXLJUhCIHEf8662xJlokNRFCv2oSadZdPX7dJPl6i/8ECsx82+Nlu4tXrdKbj8NTpHi4nNMZSgqSlY6VMrKE4pqVjxDU0XXA+GmHiRoZQpVKlVCzyfmmVl/NfWC+W8Lw6jUbjD3CGC2f7uDKkk9QVVE1gmBq6IQJ3iiqjGxqRSJS72Uy3lLX1DUob62x/L1IqbeI3mtT9LnAmn+fcmV7GLxqMJhQShgiaVlWFWCwWSJZkIpEImYxNyPM8XMeh5ji4rkfDb3BwcEC73Q6A+XyBcG8PY8M6owmVQUOQHE6QHLYQQgRARfkP6Ps+zWaTVqvF/v7+P8BCoUBvTw8jloaudgvpRDbiOkKoSB2HchfYefjf0xHrqx3XSEkAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image6"
+        title="image6"
+        src="/static/f4ba1290f2f09e6008124538cef5c78b/37523/image6.png"
+        srcset="/static/f4ba1290f2f09e6008124538cef5c78b/e9ff0/image6.png 180w,
+/static/f4ba1290f2f09e6008124538cef5c78b/f21e7/image6.png 360w,
+/static/f4ba1290f2f09e6008124538cef5c78b/37523/image6.png 720w,
+/static/f4ba1290f2f09e6008124538cef5c78b/302a4/image6.png 1080w,
+/static/f4ba1290f2f09e6008124538cef5c78b/07a9c/image6.png 1440w,
+/static/f4ba1290f2f09e6008124538cef5c78b/a5120/image6.png 2380w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></li>
+<li><code class="language-text">AdmissionReview</code> 라는 json 객체를 통해 webhook server 와 통신하게 되며 Validating admission에서는 response.allowed값만 설정해주면 되고 mutating admission에서는 response.patch값을 설정해주어야 한다.</li>
+</ul>
+<h3 id="pod-security-policy" style="position:relative;"><a href="#pod-security-policy" aria-label="pod security policy permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Pod Security policy</h3>
+<ul>
+<li>admission controller 중 <code class="language-text">PodSecurityPolicy</code>라는게 있고 이건 default가 아니여서 enable해줘야 한다. 그러면 아래와 같은 취약한 SecurityContext와 같은 설정에 대해서 admission controller 레벨에서 요청을 차단하게 된다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 51.11111111111111%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABYlAAAWJQFJUiTwAAACY0lEQVQoz13Sy0vUURTA8d+/EQYtbBzJeTjO1JS56aFBOzdhy8BFO0HUTYQSFUjRwk1hSFFbKaqFG0VnfhbMTJamOeNYqeVrfu/nPEz9xvyGorpwOFw458M5lysoisrM9Ay7uwUURfFClmUKkoSqql4UChKKqmLqGuOpVcaSOZ69zTOWyLGxvYuq1nqqIaxvrNFxqZ3M+zTFoouqyBhatVnHMHRMQ8cydHRNY8/WOT8yy5GhKUL3ROqGplj4+gNb05AlBVVWEAYHRrl4ppue7vu8+/SN/hcfufokxbXnGRKfvzM8sejdu56mebWwxeCbZQbG57n5coH+F0tMft7hbmqEPvEWPckhhA+ZZT6kV5hLZ9ktSGS+bDO59INkdhNJ1VlcL5BY2eF1Ksuj0cdcvzHMld47dPXe8fLwgxEm5iaZ207zUEwh2LaJ41oUSw6maVJxbQ7KLgflIq7jUCk6wCFr+Swd8QDxYAMnGv34ffU0+uo5WleHOD0LhweI8xaCLCvew2ua7oGmaWFaNpZt47outu3wc3+fpeUs7W1x2qIhotEYTcEQgUAQv9/PTCKB6zps7hQQqpiu1zDLsrBtG8dxKBaLlEolL1dPLpcjfjJGx8km2uIxoi3NBEM1MJlMenWyLCFomoZhGB74P1YulymXSh6Yz+eJRWO0Rk5w+VSY1pYIzYEwjccbEJOiVy9JMoLufQ/jz3TVNX9je3t7VCqV2oSrK1yInOX2sU46I6cJRwKEQiFvwipYrddVpQb+va7r1qarQv+CedpjrfT5LnEuGKepOUwwGMTn8yGKNTC3VeAXSHZ8jPvqfcAAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image7"
+        title="image7"
+        src="/static/d8eacf3e1617aca0d1c94210720ece3b/37523/image7.png"
+        srcset="/static/d8eacf3e1617aca0d1c94210720ece3b/e9ff0/image7.png 180w,
+/static/d8eacf3e1617aca0d1c94210720ece3b/f21e7/image7.png 360w,
+/static/d8eacf3e1617aca0d1c94210720ece3b/37523/image7.png 720w,
+/static/d8eacf3e1617aca0d1c94210720ece3b/302a4/image7.png 1080w,
+/static/d8eacf3e1617aca0d1c94210720ece3b/07a9c/image7.png 1440w,
+/static/d8eacf3e1617aca0d1c94210720ece3b/cc40b/image7.png 2394w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></li>
+<li>policy를 커스텀하여 아래와 같이 생성할 수도 있으며 이를 위해서는 RBAC를 통해 serviceaacount가 pod security policy에 접근가능하도록 설정이 필요하다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 54.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAABYlAAAWJQFJUiTwAAACdklEQVQoz1WSy07bQBRA/Q9VVxAoGNtJ/BiPYweICQ9FaqWu+wVUCBEK9KVKXZQNG/JA6g66a/sR8AUIUokdn5FCSIGEJHAqD6VVr3SkmdHM0b13rra1tUWtVuXw8JDj42PF0dERp6ennJ2d0Ww2Fcn64GCfzc1PfP/2lR+NBo1GQ909OTlhf/+A3d0vaM9ncszlBUEQIIRA+j4TExOUy2W63a6S/Ww26d70+FyrkLdGWSjkKcYFZmfnmJ2boxDHuJ6n3mtPCwFT0kUIH9dxcGyb0ZERlpeX6fV6KrOEXr/PTnWb0EoRRxIhAzzhYTu2SkDXdYU2HeV4lreZyoc4idR1GRsfY2VlhX6/z/n5uWJwe0u9WsEeG0HaDoHrIj2BcDxM0/yLFkhJKXQoRT5xKMn5En1cV8LbwS2tVouLVgu4Y7tSwRpNUcq5xMLGdwW+JzENA8M0ME0DTQjJvBC8mAooBQGTXog5qlNeKXN3d0e73VYkUalUeZIaohQ5zEQ+peI0hVBgmQaG8Uc4FYXM5wTFMCAfBERBjrRhsr66piSXl5eKJKrV2j9h6BFFIb5wMS3znqRkJ5MmzkwgzDRpI0NaN3n86DGLiy+V5Orqiuvra7Wu1WroQ8OUpCD2HCaFy6TvMS0Fec8ja6bRXq2t82FjlY/vXvPm7Xs2NjZYWlpib29PSTqdjiKJer2OPpyimPOZCTzmk777DvlsBpnOkjXSaEk591l01NwlozIYDBj0B9zc3Kh9cv4gNFIpFkKfWLoUpEtkZ5GWhWNkyBgWWjJj6icvLmi3f6l+JSV2O/fy/4Q7O4wNJ3MokNLF9mycB+wslmHyG4CBCLvQouqnAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image8"
+        title="image8"
+        src="/static/63418250401790b9de9ceab821d4a943/37523/image8.png"
+        srcset="/static/63418250401790b9de9ceab821d4a943/e9ff0/image8.png 180w,
+/static/63418250401790b9de9ceab821d4a943/f21e7/image8.png 360w,
+/static/63418250401790b9de9ceab821d4a943/37523/image8.png 720w,
+/static/63418250401790b9de9ceab821d4a943/302a4/image8.png 1080w,
+/static/63418250401790b9de9ceab821d4a943/07a9c/image8.png 1440w,
+/static/63418250401790b9de9ceab821d4a943/82747/image8.png 2232w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></li>
+</ul>
+<h3 id="opa--open-policy-agent-" style="position:relative;"><a href="#opa--open-policy-agent-" aria-label="opa  open policy agent  permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>OPA ( Open policy agent )</h3>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 44.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABYlAAAWJQFJUiTwAAACAklEQVQoz22Sy0pbURSGz1toj1ZzYs5t7+PJSaJYTSuoldZIO+gTBDrpVBxklPeokBAQkqiF9jVSL4M60gcwKV4SA5qr8SvZQaG0Cz7Whs3/r/0vtnbbaNBs3tJoNLi8vOTq6uqZm5sb6vU69XqD6+trar+r1Go1qtWq4uLi4h+0X6enHB0dc35+TqvV4v7+nna7TafTodlsKtNut8eP799YW07wMbVKamOdN8vLLC0tKRYXF5/RvnxO8+H9Oul0mmw2SyaTYWtri+3tbc7Ozri7u+Ph4YHd3V3ChkEiESeIRnFdges6RMwI4XAYwzAU2ru1FRxzBiklodA0E7rO+Pg4uq5TqVTodrvKsFgsKsH8wjyxRIyo72PbNpZlqf6E9mnjLVFhE5+bx/OjSG8Wx3EQQnBycky/32dYpVJJDRneOa6NlALbtjBN8y+01OamEkvpIaRUPBkeHp/Q6fUYPEKpXGYmHCYeTxALYnieh+OOzIfdFY5agbayuorjCoQrCRnTTIVeMjY2ivzz8Ihuf0DvEYqlPczpSV6/WiCZTBLEAoR0kZ7ElS62Y2PZFlq5XGbn6w65fJ5cLkc+n1cUCgX1RXq9UeS9/X2mJl4w5wuCwMcPZvF8qdY0fOFwlyryk+B/NRgM6LTb6rx/cEBoUseTYhTVsVQyy7YxIxFMy1KmfwAY/K0ID11QtAAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image9"
+        title="image9"
+        src="/static/0e532a20b6bdb55c5a07bc141a3ab1fe/37523/image9.png"
+        srcset="/static/0e532a20b6bdb55c5a07bc141a3ab1fe/e9ff0/image9.png 180w,
+/static/0e532a20b6bdb55c5a07bc141a3ab1fe/f21e7/image9.png 360w,
+/static/0e532a20b6bdb55c5a07bc141a3ab1fe/37523/image9.png 720w,
+/static/0e532a20b6bdb55c5a07bc141a3ab1fe/302a4/image9.png 1080w,
+/static/0e532a20b6bdb55c5a07bc141a3ab1fe/07a9c/image9.png 1440w,
+/static/0e532a20b6bdb55c5a07bc141a3ab1fe/92345/image9.png 2398w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<h3 id="opa-in-k8s" style="position:relative;"><a href="#opa-in-k8s" aria-label="opa in k8s permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>OPA in K8S</h3>
+<p>OPA를 활용하면 앞서 webhook 서버를 만들었던 것처럼 직접 서버를 구축할 필요없이, validatingWebhookConfiguration, mutatingWebhookConfiguration이 OPA service를 바라보도록 할 수 있다.
+그리고 OPA는 로직의 구현없이 정책 설정만으로 원하는 mutate/validate을 가능하게 해준다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 77.22222222222223%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAABYlAAAWJQFJUiTwAAAC8ElEQVQ4y32US08TURTH5xsQSGnVBWBfzOPO9DEPnjYdCJhSWPot3Lj0KxCYAhpTlZ0u3bgxceXeR2KhwEJia4G2vKZPWBCSv7mntbEunOSXc+88fjnnnntHKJ2c4smrCt58cvE4W8WP4incyzOcnZ3h/Py8x8XFRR+Xl5d9Y9d1KQr1movsBxdP3zaQeV9Ho9FEq9VCs9mi2Gq10W5zrnpcXfXTbDbhujXUajUIpV8FfPn2He8+5vD5aw57+R3kcjns7Oxgd3eXyOfzxP7+Pg4ODvrY29vD0dERSUmYffEcc4aER6kElhdtpJaWsLKy0iO9vIxUKoV0Oo2kbcO2bSwsLGBmZgaWZSEYDGJr6xn4RSVvOGtQRr2YiquIRCJQVRWxWIzGjLFeVBQFgUAAfr+/RzgcxtDQEFZXV0nI11FwHAfx0D08nIrAMHREo1HE9Th0Q4eu65SFLMuUCRf8Db/v9Xqxvr5OQio546wjOHIX6WkVRkxD3DBhWhYMw6DIpYZpwjQ7Y2vCQlzXqRJRFDE8PNwv5BPPsBdGRIGpiYgqIjRpnMpkmgyFyZBkCUxTwDRGWYVCIYyPj0OSpK7QIWG9Xu+UzNPmLy5aMtKTMhYnGEwzjpgeBVNZ52NZhCiJNOZCzh+h42RIyDtNQp/PB1mWMB0RkYiJmIxIiEU1komiRM0I+AO0jpx/hZlMR8j3bU84E2eYNyTMGTImKTMNqtopkZfPm6UwBbIi0z0O77zH40Ems0HCdrsFgdu9vjuwogxJXYIVUcBUvoU0Wngu0zSNtpLWnXMRj/w5X67Njc2usA1hbW0Ng4ODCIdCeKAFqOQYE6EwBv/9+xgdHSVGRkYojnHGOpGXPzAwAKfbFH4MhZfZLGWQSCSwkJzFvJ2EPTdHJ2F2dva/JJNJynL79TYJr6+vIZTLZRweHqJQKOBnoYBCoYhisYhSqURn9Pj4BCcnZZTLFVQqVVSrHU6rp/RHqlQqaDQauL29xc3NDX4DeFTB5A51w3EAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image10"
+        title="image10"
+        src="/static/596ae37818365532de7cf1eb4ca9ec90/37523/image10.png"
+        srcset="/static/596ae37818365532de7cf1eb4ca9ec90/e9ff0/image10.png 180w,
+/static/596ae37818365532de7cf1eb4ca9ec90/f21e7/image10.png 360w,
+/static/596ae37818365532de7cf1eb4ca9ec90/37523/image10.png 720w,
+/static/596ae37818365532de7cf1eb4ca9ec90/302a4/image10.png 1080w,
+/static/596ae37818365532de7cf1eb4ca9ec90/07a9c/image10.png 1440w,
+/static/596ae37818365532de7cf1eb4ca9ec90/891d5/image10.png 1520w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+OPA는 webhook과 마찬가지로 AdmissionReview json객체를 통해 통신되며 .rego파일에 정책을 설정할 수 있다. 그리고 <code class="language-text">import data.kubernetes.pods</code> 와 같이 클러스터의 object 정보들을 가져와서 validating에 활용할 수 있다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 48.888888888888886%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABYlAAAWJQFJUiTwAAAB6UlEQVQoz1WSu47aQBSG/TawXVg8d3t8YW1sgzYKtCmyaVLxAJsi2NwaEElol03FW3AVL/ZHMwhCik9HGs385z//GaeTd5EXOfIiQ97JkGVtpGmKdruNJEnw9vaGavgD319fMZ/PcT6fcTqdcDgcLPv9/j8cLUNoLwBlBC5x0Ww273BRVSVaWqEVR9A6gNYa2tcghNzuue61unCU9BD6EaQSYIyC0n9wzjEsS6RZjjwvrOuL8ydEtoFGEATwfd9WIQQcJTzE+glSKlBGbWcjZipjDKPRCGmSWKFOpwOpOCgnYJzaqQglIMy8IZBSwjEuYt2CUgpc8JugodFoYLPZYP3+B6vVCuv1Gsfj0WZ1n+Fut8N2u7XVoYTCVxq+1Nby1Z2pLiH4/esnvr18xteXLxgMBlgul1gsFphMJta9oaoqlGWJ4XAIxwRphAIvtDmakbhgF5eMYTYeQTcb0FLB4xLksQny4REP9QfUarUb9XrdYgWlkNAqgJDcYrKzGVKK6XSKJG0jyzJEYYgojBCGITxf2ZhM9pcq7TvHPBRCwpP+TdA4vC5lPB7bZfT7fXzq9ZDnOXr9Hp4/PqPb7dhlmbOiKGwjRwhut2v+oBG5x4w9m83sRUMcx1C+gud7FhORaW40zBcKowh/AZRYgbPR87HPAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image11"
+        title="image11"
+        src="/static/d52d0dc8e54e9a84023c119b17b64895/37523/image11.png"
+        srcset="/static/d52d0dc8e54e9a84023c119b17b64895/e9ff0/image11.png 180w,
+/static/d52d0dc8e54e9a84023c119b17b64895/f21e7/image11.png 360w,
+/static/d52d0dc8e54e9a84023c119b17b64895/37523/image11.png 720w,
+/static/d52d0dc8e54e9a84023c119b17b64895/302a4/image11.png 1080w,
+/static/d52d0dc8e54e9a84023c119b17b64895/07a9c/image11.png 1440w,
+/static/d52d0dc8e54e9a84023c119b17b64895/8c5dc/image11.png 2384w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+OPA는 어떻게 k8s 리소스를 알 수 있는가? <code class="language-text">kube-mgmt</code>를 통해서다. kube-mgmt는 사이드카 컨테이너로서 OPA pod에 함께 존재하며 2가지 역할을 한다.</p>
+<ul>
+<li>OPA에게 k8s 리소스에 대한 정보를 제공</li>
+<li>configmap과 같은 K8s 리소스를 활용하여 OPA에 policy를 로드하는 역할
+<ul>
+<li>원래는 .rego파일을 작성한 후에 <code class="language-text">curl -X PUT --data-binary @kubernetes.rego http://localhost:8181/v1/policies/exmple1</code> 과 같이 OPA에 policy를 등록해줬어야 하지만 kube-mgmt는 아래와 같이 configmap에 rego 소스를 가져옴으로써 configmap으로 등록해서 사용하게 해준다.</li>
+<li><code class="language-text">k create configmap untrusted-registry --from-file=/root/untrusted-registry.rego</code> 와 같이 ‘—from-file’ 옵션을 활용하여 쉽게 configmap을 .rego파일로부터 생성할 수 있다.</li>
+</ul>
+</li>
+</ul>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 39.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAABYlAAAWJQFJUiTwAAAB8ElEQVQozz3QvU7bUBjGcV9IpSRS7NiOHduxje0Yg40JCSIUWlVVJdSx99GJCVQSvjY2ogr1JugEC1vbpYRWpa3ER5KylO1f+Qwdfnqfc5b3OUfa2tpic3OT7e1tPp6ecnZ29t/5+blQ5IuLC25vbxmPx9zf33N3dycUd4WbmxtB6sQukWthOw66XscwDDRNQ9d1oV6vI8syaZry4/qav4+PPDw8CNM/U6bTKZPCZMJ4MkbKoiZJU8NtOjRMQ1AUhaosU61WkRWZUqlEkiS8Hw75cHLC8HjIl0+f+f3zF9+vvnE1GnF1OWL09RIpjTwCS8M1dey6im2oNEwTtaZSUxQxy+Uyi/kir9ZWiX2HLFug2+nQ6/XI85z5uXnS+VSQWjM+VsPCsmxsy8axHXRVQ5FlVKWGVlOplMpk7ZwXL58zl8RkWUYcx7RaLVzXxXFsHMcRJM/z8XxPHMyGiVm0U1Xx7OLvipZPKiVe+x3eLr9h+ekqz9bW6Xa79HqrrKysiNxuL7G01EHymi5hFJFmKWEYiq2zSUIQhmJ7EATopsFGe42NzjozYUi+sEgYhURxRDwbi+z6Lp7nInmuh+XYzAQBvu+LWTQusmXbGKZJpVIhzRc4OjricO+Aw/0DDvb22RvsstsfsNvvM9jp03+3wz+zAlVKkIS9yQAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image12"
+        title="image12"
+        src="/static/4fc62512b9702c9421f78efa879770b8/37523/image12.png"
+        srcset="/static/4fc62512b9702c9421f78efa879770b8/e9ff0/image12.png 180w,
+/static/4fc62512b9702c9421f78efa879770b8/f21e7/image12.png 360w,
+/static/4fc62512b9702c9421f78efa879770b8/37523/image12.png 720w,
+/static/4fc62512b9702c9421f78efa879770b8/302a4/image12.png 1080w,
+/static/4fc62512b9702c9421f78efa879770b8/07a9c/image12.png 1440w,
+/static/4fc62512b9702c9421f78efa879770b8/18d55/image12.png 2470w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<p>아래는 k8s와 OPA가 어떻게 integrate 되는 지에 대한 전체 그림이다. 새로운 버전에서는 OPA gatekeeper을 통해서 k8s 와 OPA과 연동된다는 것도 참고하면 좋다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 46.666666666666664%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABYlAAAWJQFJUiTwAAACTklEQVQozz2SS2tTURSF738QxaqgAx9pmzRxYEHFpgpWanUi6F8QVJwp1bFQLbUooqiDOnGg4JtSFEEKCr7wgY2NtU3amJr7POee+2pyU+WTXMUNi71Zg8Xaey/Nsixsy0I3LO5OGrz4YCKFTYt3HAchBLYj/nfDcjBtB9200U2Ln4ZFqVKlXKkmsyakpB55vP8mGbytGLqnsIRHFIV4no+ULq7r4ikX6bpYQiRz5EsCT0Ic8ujJE55OjMPyElp5rkSxUGC6UOTGvWkePv/Gwtws34sz1KqL+L6P4bjowkN3XFzlYguX+68cXk7pjL2a4+L4Ry5NfOL65CzaucFB9mzvZqB/P4cO9jOwby+9PXm6OtNcHr3Mr9+waAksv4EhPYJAUbEa3Hnwmslnj+m7OcWRsY8cvvWJ3Vfeop06cZzclvVkczky2Syd6TRdXV2salvDhaFhWiWEw9ev0wjpovwA5fsJV9VrVE2BkoKGLxNoJ4+fpH3jenq3ZchtzdLR0U4mk2b12nWMDo8kgq3btR4XBAGuH+IoD+F56EIl7ks1G92yqeom2omjx0htaGNHrp0tqRSbNm0m1dHJipWrGDn/12EQhvxaXqbeaOBHEY36EouOR8lUlA1JoSowbIGUAu3s6TPs7N7Kgb497OrJs3NXD/l8L+l0mutXryWCYbREs9kkjmPCpToqjFh0FAumpGIKyrrND+NvnLRKaZ7iuylmXn5m9s0Uc+8KlN8UmP8yg7RF4qwRN4mb/xDHWCqkJnzmTTdZOwx8lFK0IvgHaExJhq9Mn8EAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image13"
+        title="image13"
+        src="/static/e5daeba71fa248a7b57956498331f44e/37523/image13.png"
+        srcset="/static/e5daeba71fa248a7b57956498331f44e/e9ff0/image13.png 180w,
+/static/e5daeba71fa248a7b57956498331f44e/f21e7/image13.png 360w,
+/static/e5daeba71fa248a7b57956498331f44e/37523/image13.png 720w,
+/static/e5daeba71fa248a7b57956498331f44e/302a4/image13.png 1080w,
+/static/e5daeba71fa248a7b57956498331f44e/07a9c/image13.png 1440w,
+/static/e5daeba71fa248a7b57956498331f44e/d5ef8/image13.png 2462w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<h3 id="secret-관리하기" style="position:relative;"><a href="#secret-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0" aria-label="secret 관리하기 permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Secret 관리하기</h3>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 68.33333333333333%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAYAAAAvxDzwAAAACXBIWXMAABYlAAAWJQFJUiTwAAADc0lEQVQ4y1XT20+bdRzH8YebXfgPGAeFlj6H9mmfPnQLBx06HFBKoWSLp+jCRjjbtVZd6EHjvDAyigsjc5sZUUzQMB1FqFMxuGWbQQHngWNbpDPbnHN6s/gXvA0PiHrxyie/m2++3983X+FE35vEwgHiR8McCYYIBEOEgkGCwSCh0IbQ/4RDL9AVDjD11GnueJOse0e5Uf8RudpRbrZfRKj31CIX5bNHk6jURCocVkSrFeuW4uJizGazwWKwYDIXMpLXRU44zuKOBMt5fSwJx8iYTiPUeup4KL8AUZLYpUrodhHFrqLY7Cg2G7KsGEX/y2KxMJoXYE3oZeGBBEs7EiwIx0gXvo3wWjzG4YPP0tnaQuvhQ7S1HKK9tYX2jg46Ojro3NDZua27s4uW7ja+9A7yZ/nH3Cwb4XbFh9za/QF3nk4hrN27z8rd+6R/35S59xfpX/8gnV5lNZ1mJZ0mvSWTyRiy2Swr2TSL2RWW1lYNC5llMrk1BP+732Dpncbefwlb3zS2gRnU0CAVTgm3046uKtjtKqrqwOFwGmw2G4qsYJMVI+02O+YiM3WeOoT9w7PsGrhK1ZkZKk9d47Fz87ii76M6NSp3aXjKXewtc/NI6W50vYSSEjdOpxNVVXE4HIaNtyiK+Hw+hAPDs5QOXsFzbobqs1+zb2gOPT6CquloTgePl+k07dGpf1inpsJNaYkLzeVC0zSj0AbNpSHJEg2NDQiN781R1HsZpf8Kct9l5JOzKMFTiBYzxaKEqkg8qitoDgcl7n+73BjVailGLLYiWSUK8guoqa5B+OLHdc5/myY5lyU5lyF5fZ3kte8Zu3CBsbEkE+NJLk6OMzExwcTEJKlUyjD5eYrJqU2pqU8Z/+wTpq9+hfDS8+08U19F834vfq+Hpg0+L01NTdsa/X78/2jy0+Dx0TYeInz3dQI/xzmSe4XuXIw3bg0iNDY2stclUlvmRC9xb/6dS9/eqMulI8sysiRt5paqET9PLndw8HqA1p9epH7+OdoXjyLsq66maOeDlDusuBWzQbQUIUoyVlHEKkrG2ZlMJgoLCw2mnSYqhjz4Vprxf9fMgR9aqZp/gpbFMEIi0U84HCYe7SEe6eHVaA+xSIRYLE4sFjNEo1EikYiR0ViUyMs9HL80wMnfhngrd5YTv7xD4sYZhm+f52+FNmG0G0UmOQAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image14"
+        title="image14"
+        src="/static/a691b277867ef619f7f6eca1b0cdc3b3/37523/image14.png"
+        srcset="/static/a691b277867ef619f7f6eca1b0cdc3b3/e9ff0/image14.png 180w,
+/static/a691b277867ef619f7f6eca1b0cdc3b3/f21e7/image14.png 360w,
+/static/a691b277867ef619f7f6eca1b0cdc3b3/37523/image14.png 720w,
+/static/a691b277867ef619f7f6eca1b0cdc3b3/302a4/image14.png 1080w,
+/static/a691b277867ef619f7f6eca1b0cdc3b3/07a9c/image14.png 1440w,
+/static/a691b277867ef619f7f6eca1b0cdc3b3/7be33/image14.png 1558w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<ul>
+<li>RBAC를 사용하여 secret에는 최소한의 접근 권한만 부여하기</li>
+<li>secret을 ETCD에 저장하지 않고 클라우드 환경에서는 AWS Provider, Azure provider에 별도 저장하기</li>
+<li>Encrypting secret data at rest : secret 데이터를 etcd에 암호화해서 저장하는 방법 ( <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/">https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/</a> )
+<ul>
+<li>EncryptionConfiguration object</li>
+</ul>
+</li>
+</ul>
+<h3 id="gvisor" style="position:relative;"><a href="#gvisor" aria-label="gvisor permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>gVisor</h3>
+<p>Seccomp, AppArmor 와 함께 container sandboxing을 위해 쓰이는 솔루션이다. syscall과 Linux kernel 사이에 gVisor를 두어 container sandboxing을 강화한다.
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 70.55555555555556%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAOCAYAAAAvxDzwAAAACXBIWXMAABYlAAAWJQFJUiTwAAAC2klEQVQ4y02TXW8bRRSGfcE1P4b7ij8AN6jQVrmoKAKBEJUACQmo+GpF6jZJEyQchbYqqKVqJFT6kcRVm6SR2nwYN4mUqCiJW+IE2etsdm3vzs7srm3yoJn1Wrl49syZec97ZndnMuVyGcuyqFarBj1OqGLt2Vh1ieWKJDp+Mt/TWL1aHXd2dsjoJAgCfN83CCEQOqqYwHqByn+FnO1HPvgStXTZzItUJ0SvTkpJpVIhox96otls4nleImg28KMDxMYs6swryJ9fQ559FTV2BD/s4HsNfN8zeo2u1XU9w7RT2lUIHyFDhFMhfPYb9vwVGotjyM2HBCpK1j0vQZvpKERiePiVU0OTC8FBK2Zwdp++Gy85Nb5LqdamJX18KQkA0ekgAE8qAiHMtzSG+v1TIz02KGW6n5r5lddvj3DkzyEGVu+hVJvd53+z/sVpnv9whrVPP+LfuRmCuEVV71D/nUBKsyMRSALdTSpj2Gg0+WzlCicWBjm2dJFvV29h7XlsFYusvHucwscfUOx7i+38JEGrjZUatiPFf7HiIA45aGkiaEfQCvnw+jp9V1c5OrbCuYkSdAJaWg+4UYsOEMchsZJULYuMa9d4+KLJpcI+o8sOuWcOueWE0WWX9+9v8969fzh55yWn87tcXq0nmr9sfirskSvaDBdsliuCul0j07BrDBY93rjrcGLK4Z3JhGOTDm9POHz+pMnXCx7fLHl8Mtfg6ESylmqOTzm8edfhj02B79TIuPs2i6Uq159uMF4oMb601aVk8t8XNrkxv2G4ubjV1SS6W12tXtuoOGivjFuvc//Obc6f/Y7hgSyXLvR3Oc9Q9kdyI0Nc+2WUq2M5RgYuMJTtP6TpZ/hiluy57yksLpgDnnFdl7W1dabyeR5Nz/BoerobEx7PzfHk6bxhZvbxobXpnnYq/4Dtcpm66ybnML2LmjAMe0RRZEjzOI4Nh+eUUgZ9BfWJ+R9KUsy5SuU6kgAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image15"
+        title="image15"
+        src="/static/7aaedaf31ed5669ac5004df2aac74768/37523/image15.png"
+        srcset="/static/7aaedaf31ed5669ac5004df2aac74768/e9ff0/image15.png 180w,
+/static/7aaedaf31ed5669ac5004df2aac74768/f21e7/image15.png 360w,
+/static/7aaedaf31ed5669ac5004df2aac74768/37523/image15.png 720w,
+/static/7aaedaf31ed5669ac5004df2aac74768/302a4/image15.png 1080w,
+/static/7aaedaf31ed5669ac5004df2aac74768/07a9c/image15.png 1440w,
+/static/7aaedaf31ed5669ac5004df2aac74768/5dded/image15.png 1588w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+gVisor는 2개의 컴포넌트로 이루어진다.</p>
+<ul>
+<li>Sentry
+<ul>
+<li>독립적인 application 레벨의 커널이며 linux kernel에 비해 훨씬 적은 function을 가지기 때문에 활용할 수 있는 container 앱이 활용할 수 있는 syscall의 개수도 줄어든다.</li>
+</ul>
+</li>
+<li>Gofer
+<ul>
+<li>Sentry는 직접적으로 linux kernel에 파일에 대한 요청을 하지 못하고 Gofer를 활용한다. Gofer을 Linux kernel에 대한 file proxy이다.</li>
+</ul>
+</li>
+<li>gVisor network stack
+<ul>
+<li>Gofer와 마찬가지로 gVisor는 network stack을 proxy로 제공하여 app이 직접 Linux kernel의 network code를 건들지 않도록 한다.</li>
+</ul>
+</li>
+<li>gVisor 활용 시의 단점 : 모든 app이 gVisor 기반으로 동작하지는 않는다, 더 많은 instruction을 수행해야 하므로 app이 살짝 느려질 수 있다.</li>
+</ul>
+<h3 id="kata-container" style="position:relative;"><a href="#kata-container" aria-label="kata container permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Kata container</h3>
+<p>gVisor와 달리 가벼운 kernel을 컨테이너에 포함시킴으로써 sandboxing을 하는 방법이지만 일반적인 컨테이너 앱에 비해 더 많은 리소스를 필요로 한다.</p>
+<h3 id="runtime-classes" style="position:relative;"><a href="#runtime-classes" aria-label="runtime classes permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Runtime classes</h3>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 50.55555555555556%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAABYlAAAWJQFJUiTwAAACPklEQVQoz1WR20tUURSH51/rqZcgeimol3yLogKzsOwCWUFBUClBWZhCkNJFozQLMwTDyrExnfJMZU5q3mbO3vvs2zmj+cUZcaqHj7X32vCtH3tlbt1vo6nxJKcPHqfpUAPnjpyk8UA9x+rryWazxHGMlJIoimoIKUiSCgOvBzh1uIHmhjNcPHGOs0cbySyKFQo978nuaGOs7j7ZPR3k9nZSDGYIpUBrXZVs1SpSYdY9P3s/MrbtJuO7OxjfeZfs9ltkzO+Y1aFvfN/1gOn9vXzd94TZuqfYssZ6WxUZY2qk96o8rSrCKc2vYAm5LNChIiOVoDxTZHn4E/MDoywNvqc0+pmotIq1Fmcdzv0l7aVsJTbOUAx+EZYFSqdCISjnevG5TpJcB2sT7ZgPt1GFEXyyjncO7/1/bImNNlhr+BksIsqCKFJkQiEJQ8HbYIGHH2boGZ8lmC9tpvO+upSUJElq53+lzlvmCqlQEumIjJCKkpS8/jJPz0SRx7kik6kwTRPHVCqVvyRJjTjelPrYM1dYQgq1KVQqohxKjIwIVxRGWpx2RNrhnUcrg4ks3sXVAZF1hJHBpG/aopVmcXaV0mK5mjKjlEIJxUjXJP0t7+i7/o7g7RwbG2sMv8hz79ogHTeGGH4+RbAsuPIqz9XBPK1vppHaMP4soL91lL6WUXIvC2Ri75gq/KC5rYvW7j4utz/iwu0uFpZLVOIKVnuc8SQ+obK2hvUx2rrqF4zlv3K+rZvW7n4u3e3m7J1H/AGwqcfjX6lpvgAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image16"
+        title="image16"
+        src="/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/37523/image16.png"
+        srcset="/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/e9ff0/image16.png 180w,
+/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/f21e7/image16.png 360w,
+/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/37523/image16.png 720w,
+/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/302a4/image16.png 1080w,
+/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/07a9c/image16.png 1440w,
+/static/9b0cf7f1d3c0fdf8c9535fa5bda72e01/daf70/image16.png 2464w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span></p>
+<ul>
+<li>아래와 같이 runtimeclass 생성가
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+    name: secure-runtime
+handler: runsc</code></pre></div>
+</li>
+<li>그리고 아래와 같이 pod에 적용 가능
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">apiVersion: v1
+kind: Pod
+metadata:
+    name: simple-webapp-1
+    labels:
+        name: simple-webapp
+spec:
+  runtimeClassName: secure-runtime
+  containers:
+    - name: simple-webapp
+      image: kodekloud/webapp-delayed-start
+      ports:
+        - containerPort: 8080</code></pre></div>
+</li>
+</ul>
+<h3 id="mutual-sslmtls" style="position:relative;"><a href="#mutual-sslmtls" aria-label="mutual sslmtls permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Mutual SSL(mTLS)</h3>
+<p><img src="./image17.png" alt="image17"></p>
+<h4 id="pod-간의-통신의-보안에서-사용되는-mtls" style="position:relative;"><a href="#pod-%EA%B0%84%EC%9D%98-%ED%86%B5%EC%8B%A0%EC%9D%98-%EB%B3%B4%EC%95%88%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%EB%90%98%EB%8A%94-mtls" aria-label="pod 간의 통신의 보안에서 사용되는 mtls permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Pod 간의 통신의 보안에서 사용되는 mTLS</h4>
+<ul>
+<li>istio
+<span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 720px; "
+    >
+      <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 44.44444444444444%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfklEQVQoz42PzWoUQRRG6w18A5/EV3Dv3n0ewAERXLgRjGhwbdCF4Ca6CYouEnARkoASo0awmWnU6a5013/1Tyae0KUDZkbFxaHgUt+53xWVUjgTOA2nWOPQxmCt/S/mf+kCwVkqpRGFtGx9ecft3Ue8zTOK43nApdc5d47fhbLW7GdTRs8PePk+p6xqRFbkXH5yn4t3b3B1Yx2pdJJ57xMhhCWGubGOWluuPNznwrUXXFrd5uhriTj8ljF6/YDR5hp3dh6TlxLz65TFdosts6nk+tNtVta3GD074HBSIJTyvBnvcGvvHh/Lz1TK47wnhkCM8Y/Mm+aV4tP4iJsbe7z68D0VEUWlOIktP9oZfdsxVYYYG9q2/SexaSi1o+96mHXM2sDgEsdKY6xlIuu0vdSWpvkp7LpuibmwadokbJvIRGq0dQwuMa00tXGMS431gULbv8oWxYV2+BBTdnAUtUZIZSiVpbYeaTzGx3PBvu+XSPOuw4WYMmrIaodUljMSW6A62SchKQAAAABJRU5ErkJggg=='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="image18"
+        title="image18"
+        src="/static/1dad1d455c54514edfdb9c05f9652c46/37523/image18.png"
+        srcset="/static/1dad1d455c54514edfdb9c05f9652c46/e9ff0/image18.png 180w,
+/static/1dad1d455c54514edfdb9c05f9652c46/f21e7/image18.png 360w,
+/static/1dad1d455c54514edfdb9c05f9652c46/37523/image18.png 720w,
+/static/1dad1d455c54514edfdb9c05f9652c46/302a4/image18.png 1080w,
+/static/1dad1d455c54514edfdb9c05f9652c46/07a9c/image18.png 1440w,
+/static/1dad1d455c54514edfdb9c05f9652c46/80cfc/image18.png 1844w"
+        sizes="(max-width: 720px) 100vw, 720px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+        decoding="async"
+      />
+    </span>
+<ul>
+<li>sidecar에서 encrypt해서 메시지를 다른 pod로 보내고 받는 pod에서도 istio sidecar에서 decrypt해서 application container로 메시지 전달</li>
+<li>permissive / opportunistic 모드 : istio sidecar 컨테이너가 없는 외부 앱의 Plain text 통신도 허용</li>
+<li>enforced / strict 모드 : mTLS 통신 만을 허용</li>
+</ul>
+</li>
+</ul></div></div><div class="post-navigator"><div class="post-navigator-card-wrapper"><a class="post-card prev" href="/read-center-church8/"><div class="direction">이전 글</div><div class="title">[독서 모임] 도시를 사랑할 수 있을까 - 센터처치 Week8</div></a></div><div class="post-navigator-card-wrapper"><a class="post-card next" href="/etl1/"><div class="direction">다음 글</div><div class="title">Informatica 1</div></a></div></div><div class="utterances"></div></main><footer class="page-footer-wrapper"><p class="page-footer">© <!-- -->2023<!-- --> <a href="https://github.com/jjunyong">Jplus</a> powered by<a href="https://github.com/zoomKoding/zoomkoding-gatsby-blog"> zoomkoding-gatsby-blog</a></p></footer><div class="dark-mode-button-wrapper"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium dark-mode-button css-1yxmbwk" tabindex="0" type="button"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge dark-mode-icon css-6flbmm" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="DarkModeIcon"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg></button></div></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/cks5/";window.___webpackCompilationHash="4dc156c514f63a6f8d3e";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-f196834924f88edde8fc.js"],"app":["/app-82aac73f1d5a7f751fb8.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-12b5d8159c7e67968cd6.js"],"component---src-pages-404-js":["/component---src-pages-404-js-29258485103e835516fd.js"],"component---src-pages-about-js":["/component---src-pages-about-js-7ef65d31f4e471233a87.js"],"component---src-pages-index-js":["/component---src-pages-index-js-326b652c9ec950d6439a.js"],"component---src-templates-blog-template-js":["/component---src-templates-blog-template-js-2b0521eff6d4e80c8984.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-addefa15e14ce4af818f.js"]};/*]]>*/</script><script src="/polyfill-f196834924f88edde8fc.js" nomodule=""></script><script src="/app-82aac73f1d5a7f751fb8.js" async=""></script><script src="/framework-de157c6b30d4790e4e81.js" async=""></script><script src="/webpack-runtime-8feecb4880683b1a3b13.js" async=""></script></body></html>
