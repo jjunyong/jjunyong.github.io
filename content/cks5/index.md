@@ -101,7 +101,7 @@ gVisor와 달리 가벼운 kernel을 컨테이너에 포함시킴으로써 sandb
 
 ### Runtime classes
 ![image16](./image16.png)
-- 아래와 같이 runtimeclass 생성가
+- 아래와 같이 runtimeclass 생성가능
   ```
   apiVersion: node.k8s.io/v1
   kind: RuntimeClass

@@ -175,10 +175,8 @@ AppArmor는 Linux에서 내장되어 있고 프로세스에게 리소스에 대�
 
 #### AppArmor Profile 
 - Profile 예시
-  - 
-      ![image12](./image12.png)
-  - 
-      ![image13](./image13.png)
+    ![image12](./image12.png)
+    ![image13](./image13.png)
 - Profile mode
   - enforce : profile의 rule을 application에 적용
   - complain : profile의 rule을 application에 실제 적용하지는 않고 logging만 함 
@@ -189,8 +187,8 @@ AppArmor는 Linux에서 내장되어 있고 프로세스에게 리소스에 대�
 - 위를 통해 설치된 aa-genprof 커맨드 활용하여 profile 생성 
   - `aa-genprof /root/add_data.sh` 와 같은 명령을 통해 어플리케이션에 대한 apparmor에서 제공하는 일련의 질문에 대해서 모두 답하면 profile이 그에 상응하게 enforce모드로 생성된다.
   - `aa-status`로 확인 가능
-- 이미 존재하는 Profile을 load하는 방법
-  - ``apparmor_parser /etc/apparmor.d/root.add_data.sh
+- Profile 파일을 apparomor에 load하는 방법
+  - `apparmor_parser /etc/apparmor.d/root.add_data.sh`
 - profile disable 하는 법 
   - `apparmor_parser -R /etc/apparmor.d/root.add_data.sh`
   - `ln -s /etc/apparmor.d/root.add_data.sh /etc/apparmor.d/disable`
