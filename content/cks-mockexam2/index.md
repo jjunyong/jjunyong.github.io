@@ -1,233 +1,225 @@
 ---
 emoji: 🧢
-title: '[CKS] Mockexam 1' 
-date: '2023-11-01 00:00:00'
+title: '[CKS] Mockexam 2' 
+date: '2023-11-11 00:00:00'
 author: jjunyong
 tags: k8s
 categories: DevOps
 ---
 
-## EXAM 1
+## EXAM 2
 
 ### Q1
 ```
+A pod called redis-backend has been created in the prod-x12cs namespace. 
+It has been exposed as a service of type ClusterIP. 
+Using a network policy called allow-redis-access, lock down access to this pod only to the following:
 
-A pod has been created in the omni namespace. However, there are a couple of issues with it.
+1. Any pod in the same namespace with the label backend=prod-x12cs.
+2. All pods in the prod-yx13cs namespace.
 
-The pod has been created with more permissions than it needs.
-It allows read access in the directory /usr/share/nginx/html/internal causing an Internal Site to be accessed publicly.
-
-To check this, click on the button called Site (above the terminal) and add /internal/ to the end of the URL.
-Use the below recommendations to fix this.
-
-Use the AppArmor profile created at /etc/apparmor.d/frontend to restrict the internal site.
-There are several service accounts created in the omni namespace. Apply the principle of least privilege and use the service account with the minimum privileges (excluding the default service account).
-Once the pod is recreated with the correct service account, delete the other unused service accounts in omni namespace (excluding the default service account).
-
-
-You can recreate the pod but do not create a new service accounts and do not use the default service account.
-correct service account used?
-
-- obsolete service accounts deleted?
-- internal-site restricted?
-- pod running?
+All other incoming connections should be blocked.
+Use the existing labels when creating the network policy.
 ```
 
 ### Q1 Answer 
-1. AppAromor profile 로드하기
-```bash
-apparmor_parser -q /etc/apparmor.d/frontend
+- namespaceSelector 에서는 metadata.namspace의 동일한 namespace에 대한 것은 설정할 필요 없고, 다른 namespace에서 접근하고자 하는 경우에만 namespaceSelector를 적용한다.
+- namespace에 대한 selector는 label 한 쌍으로 충분하지만, podSelector에서는 pod의 모든 label에 대해서 일치하도록 규칙을 설정하여야 한다.
 ```
-2. profile 이름으로 정상 로드 확인하기 
-```bash
-aa-status | grep restricted-frontend                      
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-redis-access
+  namespace: prod-x12cs
+spec:
+  podSelector:
+    matchLabels:
+      run: redis-backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          access: redis
+    - podSelector:
+        matchLabels:
+          backend: prod-x12cs
+    ports:
+    - protocol: TCP
+      port: 6379
 ```
-3. default sa를 제외하고 가장 권한이 적은 `frontend-default` sa를 frontend-site pod에서 적용하도록 설정  
-
 
 ### Q2
 ```
-A pod has been created in the orion namespace. It uses secrets as environment variables. Extract the decoded secret for the CONNECTOR_PASSWORD and place it under /root/CKS/secrets/CONNECTOR_PASSWORD.
+A few pods have been deployed in the apps-xyz namespace. There is a pod called redis-backend which serves as the backend for the apps app1 and app2. The pod called app3 on the other hand, does not need access to this redis-backend pod. Create a network policy called allow-app1-app2 that will only allow incoming traffic from app1 and app2 to the redis-pod.
 
-You are not done, instead of using secrets as an environment variable, mount the secret as a read-only volume at path /mnt/connector/password that can be then used by the application inside.
+Make sure that all the available labels are used correctly to target the correct pods. Do not make any other changes to these objects.
 ```
 
 ### Q2 Answer
 ```yaml
-apiVersion: v1
-kind: Pod
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
 metadata:
-    labels:
-        name: app-xyz
-    name: app-xyz
-    namespace: orion
+  name: allow-app1-app2
+  namespace: apps-xyz
 spec:
-    containers:
-        -
-            image: nginx
-            name: app-xyz
-            ports:
-            - containerPort: 3306
-            volumeMounts: 
-            - name: secret-volume
-              mountPath: /mnt/connector/password
-              readOnly: true
-    volumes:
-    - name: secret-volume
-      secret:
-        secretName: a-safe-secret
+  podSelector:
+    matchLabels:
+      tier: backend
+      role: db
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          name: app1
+          tier: frontend
+    - podSelector:
+        matchLabels:
+          name: app2
+          tier: frontend
 ```
-
+나의 답안은 아래와 같았으나 틀린 이유는 network policy에서 규칙을 정의할 때, 모든 label이 일치하도록 설정해야 하므로 위와 같이 하는 것이 옳다. 
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-app1-app2
+  namespace: apps-xyz
+spec:
+  podSelector:
+    matchLabels:
+      tier: backend
+      role: db
+  ingress:
+  - from:
+    - podSelector:
+        matchExpressions:
+        - key: name
+          operator: In
+          values: ["app1", "app2"]
+```
 ### Q3
 ```
-A number of pods have been created in the delta namespace. Using the trivy tool, which has been installed on the controlplane, identify and delete pods except the one with least number of CRITICAL level vulnerabilities.
+A pod has been created in the gamma namespace using a service account called cluster-view. This service account has been granted additional permissions as compared to the default service account and can view resources cluster-wide on this Kubernetes cluster. While these permissions are important for the application in this pod to work, the secret token is still mounted on this pod.
 
-Note: Do not modify the objects in anyway other than deleting the ones that have critical vulnerabilities.
+Secure the pod in such a way that the secret token is no longer mounted on this pod. You may delete and recreate the pod.
 ```
 
 ### Q3 Answer
-- trivy image 명령어를 이용해 실행 중인 pod 중에 가장 vulnerability가 적은 image를 실행하고 있는 pod만 남기고 모두 삭제하기
-
-### Q4
-```
-Create a new pod called audit-nginx in the default namespace using the nginx image. Secure the syscalls that this pod can use by using the audit.json seccomp profile in the pod's security context.
-
-The audit.json is provided at /root/CKS directory. Make sure to move it under the profiles directory inside the default seccomp directory before creating the pod
-```
-### Q4 Answer
-- mv /root/CKS/audit.json /var/lib/kubelet/seccomp/profiles
-- Seccomp 적용하여 pod replace하기 
-  ```
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      labels:
-        run: nginx
-      name: audit-nginx
-    spec:
-      securityContext:
-        seccompProfile:
-          type: Localhost
-          localhostProfile: profiles/audit.json
-      containers:
-      - image: nginx
-        name: nginx
-  ```
-
-### Q5
-The CIS Benchmark report for the Controller Manager and Scheduler is available at the tab called CIS Report 1.
-
-Report 내용: 
-- [FAIL] 1.1.12 Ensure that the etcd data directory ownership is set to etcd:etcd (Automated)
-- [FAIL] 1.3.2 Ensure that the --profiling argument is set to false (Automated)
-- [FAIL] 1.4.1 Ensure that the --profiling argument is set to false (Automated)
-
-### Q5 Answer
-```
-The fixes are mentioned in the same report. Update the Controller Manager and Scheduler static pod definition file as per the recommendations.
-1. Make sure that the --profiling=false parameter is set.
-```
-
-### Q6
-```
-There is something suspicious happening with one of the pods running an httpd image in this cluster.
-The Falco service shows frequent alerts that start with: File below a known binary directory opened for writing.
-
-Identify the rule causing this alert and update it as per the below requirements:
-
-Output should be displayed as: CRITICAL File below a known binary directory opened for writing (user_id=user_id file_updated=file_name command=command_that_was_run)
-Alerts are logged to /opt/security_incidents/alerts.log
-
-Do not update the default rules file directly. Rather use the falco_rules.local.yaml file to override.
-Note: Once the alert has been updated, you may have to wait for up to a minute for the alerts to be written to the new log location.
-```
-### Q6 Answer
-- `/etc/falco/falco.yaml`에서 file_output을 enable 하기 
-  ```
-    file_output:
-      enabled: true
-      keep_alive: false
-      filename: /opt/security_incidents/alerts.log
-  ```
-- `/etc/falco/falco_rules.local.yaml`에서 rule 작성하기 
-  ```
-    - rule: Write below binary dir
-      desc: an attempt to write to any file below a set of binary directories
-      condition: >
-        bin_dir and evt.dir = < and open_write
-        and not package_mgmt_procs
-        and not exe_running_docker_save
-        and not python_running_get_pip
-        and not python_running_ms_oms
-        and not user_known_write_below_binary_dir_activities
-      output: >
-        File below a known binary directory opened for writing (user_id=%user.uid file_updated=%fd.name command=%proc.cmdline)
-      priority: CRITICAL
-      tags: [filesystem, mitre_persistence]
-  ```
-- `kill -1 $(cat /var/run/falco.pid)`
-
-### Q7
-```
-A pod called busy-rx100 has been created in the production namespace. Secure the pod by recreating it using the runtimeClass called gvisor. You may delete and recreate the pod.``
-```
-### Q7 Answer
-- 아래 yaml파일로 gvisor runtimeClass로 pod 생성하기 
-```
+- automountServiceAccountToken: false 필드를 pod에 추가 
+  - 이 옵션을 추가해주면 serviceaccount token secret이 pod의 `/var/run/secrets/kubernetes.io/serviceaccount` 경로에 마운트 되지 않게 해준다. 
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
-    labels:
-        run: busy-rx100
-    name: busy-rx100
-    namespace: production
+  labels:
+    run: apps-cluster-dash
+  name: apps-cluster-dash
+  namespace: gamma
 spec:
-    runtimeClassName: gvisor
-    containers:
-        -
-            image: nginx
-            name: busy-rx100
+  containers:
+  - image: nginx
+    name: apps-cluster-dash
+  serviceAccountName: cluster-view
+  automountServiceAccountToken: false
 ```
+
+### Q4
+```
+A pod in the sahara namespace has generated alerts that a shell was opened inside the container.
+To recognize such alerts, set the priority to ALERT and change the format of the output so that it looks like the below:
+
+ALERT timestamp of the event without nanoseconds,User ID,the container id,the container image repository
+Make sure to update the rule in such a way that the changes will persists across Falco updates.
+
+You can refer the falco documentation
+```
+### Q4 Answer
+- /etc/falco/falco_rules.local.yaml 에서 아래와 같이 작성한다. 
+```yaml
+- rule: Terminal shell in container
+  desc: A shell was used as the entrypoint/exec point into a container with an attached terminal.
+  condition: >
+    spawned_process and container
+    and shell_procs and proc.tty != 0
+    and container_entrypoint
+    and not user_expected_terminal_shell_in_container_conditions
+  output: >
+    %evt.time.s,%user.uid,%container.id,%container.image.repository
+  priority: ALERT
+  tags: [container, shell, mitre_execution]
+``` 
+- Use the falco documentation to use the correct sysdig filters in the output.
+For example, the evt.time.s filter prints the timestamp for the event without nano seconds. This is clearly described in the falco documentation here - https://falco.org/docs/rules/supported-fields/#evt-field-class
+
+### Q5
+martin is a developer who needs access to work on the dev-a, dev-b and dev-z namespace. He should have the ability to carry out any operation on any pod in dev-a and dev-b namespaces. However, on the dev-z namespace, he should only have the permission to get and list the pods.
+
+The current set-up is too permissive and violates the above condition. Use the above requirement and secure martin's access in the cluster. You may re-create objects, however, make sure to use the same name as the ones in effect currently.
+
+### Q5 Answer
+- role 삭제 후 아래 yaml파일로 role생성
+  - k delete role dev-user-access -n dev-z
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+    name: dev-user-access
+    namespace: dev-z
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - get
+    - list
+```
+
+### Q6
+On the controlplane node, an unknown process is bound to the port 8088. Identify the process and prevent it from running again by stopping and disabling any associated services. Finally, remove the package that was responsible for starting this process.
+
+### Q6 Answer
+- netstat으로 8088 포트에 해당하는 process 찾기 
+- systemctl stop lshttpd
+- systemctl disable lshttpd
+- 동일한 이름의 패키지가 존재하는 지 확인
+  - apt list --installed | grep openlitespeed
+- apt remove openlitespeed -y
+
+
+### Q7
+A pod has been created in the omega namespace using the pod definition file located at /root/CKS/omega-app.yaml. However, there is something wrong with it and the pod is not in a running state.
+
+We have used a custom seccomp profile located at /var/lib/kubelet/seccomp/custom-profile.json to ensure that this pod can only make use of limited syscalls to the Linux Kernel of the host operating system. However, it appears the profile does not allow the read and write syscalls. Fix this by adding it to the profile and use it to start the pod.
+
+### Q7 Answer
+- seccomp profile 파일의 경로를 변경
+  - /var/lib/kubelet/seccomp 하위에 profiles 디렉토리 만들고 거기로 Profile 파일 이동 
+- custom-profile.json에 'read', 'write' syscall추가 
+- pod replace하기
+  - kubectl replace -f /root/CKS/omega-app.yaml --force
+
 ### Q8
-```
-We need to make sure that when pods are created in this cluster, they cannot use the latest image tag, irrespective of the repository being used.
+A pod definition file has been created at /root/CKS/simple-pod.yaml . Using the kubesec tool, generate a report for this pod definition file and fix the major issues so that the subsequent scan report no longer fails.
 
-To achieve this, a simple Admission Webhook Server has been developed and deployed. A service called image-bouncer-webhook is exposed in the cluster internally. 
-This Webhook server ensures that the developers of the team cannot use the latest image tag.
-Make use of the following specs to integrate it with the cluster using an ImagePolicyWebhook:
+Once done, generate the report again and save it to the file /root/CKS/kubesec-report.txt
 
-Create a new admission configuration file at /etc/admission-controllers/admission-configuration.yaml
-The kubeconfig file with the credentials to connect to the webhook server is located at /root/CKS/ImagePolicy/admission-kubeconfig.yaml. 
-
-Note: The directory /root/CKS/ImagePolicy/ has already been mounted on the kube-apiserver at path /etc/admission-controllers so use this path to store the admission configuration.
-Make sure that if the latest tag is used, the request must be rejected at all times.
-Enable the Admission Controller.
-
-Finally, delete the existing pod in the magnum namespace that is in violation of the policy and recreate it, ensuring the same image but using the tag 1.27.
-
-NOTE: If the kube-apiserver becomes unresponsive, this can affect the validation of this exam. In such a case, please restore the kube-apiserver using the backup file created at: /root/backup/kube-apiserver.yaml, wait for the API to be available again and proceed.
-
-```
 ### Q8 Answer
-- 1. 아래와 같은 `admission-configuration.yaml` 파일을 k8s doc의 ImagePolicyWebhook plugin 예시를 참조하여 `/root/CKS/ImagePolicy` 경로에 생성한다.
-  - `/root/CKS/ImagePolicy` 경로는 문제에서 kube-apiserver pod의 `/etc/admission-contollers` 경로에 마운트 된다. 따라서 kubeConfigFile의 경로 또한 `/root/CKS/ImagePolicy/admission-kubeconfig.yaml` 가 아닌 `/etc/admission-controllers/admission-kubeconfig.yaml`로 아래와 같이 설정하는 것이다. 
-  ```
-  apiVersion: apiserver.config.k8s.io/v1
-  kind: AdmissionConfiguration
-  plugins:
-  - name: ImagePolicyWebhook
-    configuration:
-      imagePolicy:
-        kubeConfigFile: /etc/admission-controllers/admission-kubeconfig.yaml
-        allowTTL: 50
-        denyTTL: 50
-        retryBackoff: 500
-        defaultAllow: false
-  ```
-  - 실제 kube-apiserver에서 volume mount에 대한 설정을 확인해 볼 수도 있다.
+- SYS_ADMIN capability를 빼고 아래 결과 저장
+  - kubesec scan /root/CKS/simple-pod.yaml > /root/CKS/kubesec-report.txt
 
-- 2. kube-apiserverd에서 ImagePolicyWebhook을 enable시키고, 위에서 작성한 admission-configuration.yaml파일을 config로 사용하도록 설정한다. 여기서 유의해야 할점은 kubeConfigFile 의 경로와 마찬가지로 pod 내의 경로를 기준으로 하여 작성해야 한다는 점이다. 
-  ```
-  - --admission-control-config-file=/etc/admission-controllers/admission-configuration.yaml
-  - --enable-admission-plugins=NodeRestriction,ImagePolicyWebhook
-  ```
+### Q9
+Create a new pod called secure-nginx-pod in the seth namespace. Use one of the images from the below which has a least number of CRITICAL vulnerabilities.
+
+nginx
+nginx:1.19
+nginx:1.17
+nginx:1.20
+gcr.io/google-containers/nginx
+bitnami/jenkins:latest
+### Q9 Answer
+- trivy image --severity CRITICAL {image명} 으로 검사해서 가장 취약점이 적은 gcr.io/google-containers/nginx 이미지로 pod 생성하기 
+  - kubectl -n seth run secure-nginx-pod --image gcr.io/google-containers/nginx 
