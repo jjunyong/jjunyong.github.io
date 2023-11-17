@@ -143,3 +143,141 @@ You can also verify your changes by looking at the existing Deployment untrusted
       ```
 - 이제 `k run opa-test --image=very-bad-registry.com/image` 로 테스트해보면 OPA에서 막히는 걸 확인할 수 있다.
 
+### Q8 : Secure K8S dashboard
+
+The Kubernetes Dashboard is installed in Namespace kubernetes-dashboard and is configured to:
+
+Allow users to "skip login"
+Allow insecure access (HTTP without authentication)
+Allow basic authentication
+Allow access from outside the cluster
+You are asked to make it more secure by:
+
+Deny users to "skip login"
+Deny insecure access, enforce HTTPS (self signed certificates are ok for now)
+Add the --auto-generate-certificates argument
+Enforce authentication using a token (with possibility to use RBAC)
+Allow only cluster internal access
+
+### Q8 정답
+- k -n kubernetes-dashboard get pod,svc 로 살펴보기 
+- service가 NodePort로 expose되어 있는 걸 위에서 확인하고 노드ip확인 후 
+  - curl http://192.168.100.11:32520 로 접근됨을 확인 ( 즉, unsecure )
+- k -n kubernetes-dashboard edit deploy kubernetes-dashboard 하여 secure하게 설정하기 
+  ```yaml
+      template:
+        spec:
+          containers:
+          - args:
+            - --namespace=kubernetes-dashboard  
+            - --authentication-mode=token        # change or delete, "token" is default
+            - --auto-generate-certificates       # add
+            #- --enable-skip-login=true          # delete or set to false
+            #- --enable-insecure-login           # delete
+            image: kubernetesui/dashboard:v2.0.3
+            imagePullPolicy: Always
+            name: kubernetes-dashboard
+  ```
+  - k -n kubernetes-dashboard edit svc kubernetes-dashboard 를 통해 nodePort로 접근되지 않도록 ㅇservice 수정하기
+    ```yaml
+     spec:
+      clusterIP: 10.107.176.19
+      externalTrafficPolicy: Cluster   # delete
+      internalTrafficPolicy: Cluster
+      ports:
+      - name: http
+        nodePort: 32513                # delete
+        port: 9090
+        protocol: TCP
+        targetPort: 9090
+      - name: https
+        nodePort: 32441                # delete
+        port: 443
+        protocol: TCP
+        targetPort: 8443
+      selector:
+        k8s-app: kubernetes-dashboard
+      sessionAffinity: None
+      type: ClusterIP                  # change or delete
+    status:
+      loadBalancer: {}
+    ```
+### Q9 : AppArmor
+Some containers need to run more secure and restricted. There is an existing AppArmor profile located at /opt/course/9/profile for this.
+
+Install the AppArmor profile on Node cluster1-node1. Connect using ssh cluster1-node1.
+
+Add label security=apparmor to the Node
+
+Create a Deployment named apparmor in Namespace default with:
+
+One replica of image nginx:1.19.2
+NodeSelector for security=apparmor
+Single container named c1 with the AppArmor profile enabled
+The Pod might not run properly with the profile enabled. Write the logs of the Pod into /opt/course/9/logs so another team can work on getting the application running.
+
+### Q9 정답
+- 이 문제는 mockexam의 AppArmor문제와 크게 다르지 않은데 단지 로컬 환경에서 node1로 profile파일을 옮겨줘야 하기에 scp 명령을 활용하거나 copy&paste해야 한다.
+  - ```scp /opt/course/9/profile cluster1-node1:~/```
+- 모든 작업이 끝난 후  로그를 로컬 파일에 저장 
+  - k logs apparmor-85c65645dc-jbch8 > /opt/course/9/logs
+
+### Q10 : Container Runtime Sandbox gVisor
+Team purple wants to run some of their workloads more secure. Worker node cluster1-node2 has container engine containerd already installed and it's configured to support the runsc/gvisor runtime.
+
+Create a RuntimeClass named gvisor with handler runsc.
+
+Create a Pod that uses the RuntimeClass. The Pod should be in Namespace team-purple, named gvisor-test and of image nginx:1.19.2. Make sure the Pod runs on cluster1-node2.
+
+Write the dmesg output of the successfully started Pod into /opt/course/10/gvisor-test-dmesg.
+
+### Q10 Answer
+- 아래 Runtimeclass 생성 후 apply
+  ```yaml
+  apiVersion: node.k8s.io/v1
+    kind: RuntimeClass
+    metadata:
+      name: gvisor
+    handler: runsc
+  ```
+- k -n team-purple run gvisor-test --image=nginx:1.19.2 --dry-run=client -o yaml > 10_pod.yaml 를 하여 만들어진 파일 기반으로 2개 행을 아래처럼 추가하여 apply
+  ```yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: null
+    labels:
+      run: gvisor-test
+    name: gvisor-test
+    namespace: team-purple
+  spec:
+    nodeName: cluster1-node2 # add
+    runtimeClassName: gvisor   # add
+    containers:
+    - image: nginx:1.19.2
+      name: gvisor-test
+      resources: {}
+    dnsPolicy: ClusterFirst
+    restartPolicy: Always
+  status: {}
+  ```
+- dmesg 로 pod가 gvisor sandbox가 적용되었는 지 확인 후 output으로 로그 저장한다.
+  - k -n team-purple exec gvisor-test -- dmesg > /opt/course/10/gvisor-test-dmesg
+
+### Q11 : Secrets in ETCD
+
+There is an existing Secret called database-access in Namespace team-green.
+Read the complete Secret content directly from ETCD (using etcdctl) and store it into /opt/course/11/etcd-secret-content. Write the plain and decoded Secret's value of key "pass" into /opt/course/11/database-password.
+
+### Q11 정답
+- kube-apiserver.yaml 파일에서 etcd 관련된 cert 설정을 찾는다.
+- 이를 활용하여 etcdctl 명령어를 써서 값을 얻어와야 한다. (kubernetes.io 참고)
+  - ETCD 는 `/registry/{type}/{namespace}/{name}` 경로에 데이터를 저장한다. 
+```
+- ETCDCTL_API=3 etcdctl \
+--cert /etc/kubernetes/pki/apiserver-etcd-client.crt \
+--key /etc/kubernetes/pki/apiserver-etcd-client.key \
+--cacert /etc/kubernetes/pki/etcd/ca.crt get /registry/secrets/team-green/database-access
+```
+  - 이 결과를 /opt/course/11/etcd-secret-content에 저장한다.
+- 위에서 얻은 secret의 결과로부터 password를 base64 decode하여 /opt/course/11/database-password에 저장한다. 
