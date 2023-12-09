@@ -1,6 +1,6 @@
 ---
 emoji: 🧢
-title: 'AEM Seminar'
+title: '[AEM] Training course'
 date: '2023-12-09 22:13:33'
 author: jjunyong
 tags: AEM

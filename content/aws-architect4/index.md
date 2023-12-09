@@ -4,7 +4,7 @@ title: '[AWS architect] 4. Computing'
 date: '2022-07-05 20:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 ## 개요
 - EC2에 서버를 배포할 때 고려해야 할 사항이 무엇인가?

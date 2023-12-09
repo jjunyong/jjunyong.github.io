@@ -4,7 +4,7 @@ title: '[AWS architect] 5. AWS Storage'
 date: '2022-07-06 00:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## 개요

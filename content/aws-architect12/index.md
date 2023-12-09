@@ -4,7 +4,7 @@ title: '[AWS architect] 12. Edge service'
 date: '2022-07-08 00:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## 개요

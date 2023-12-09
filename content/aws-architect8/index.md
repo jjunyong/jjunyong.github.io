@@ -4,7 +4,7 @@ title: '[AWS architect] 8. AWS 자동화'
 date: '2022-07-06 00:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## IaC

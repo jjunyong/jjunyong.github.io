@@ -4,7 +4,7 @@ title: '[AWS architect] 2. Account & Security'
 date: '2022-07-05 20:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ### 보안 주체와 자격증명

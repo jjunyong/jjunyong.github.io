@@ -4,7 +4,7 @@ title: 'DBeaver에서 MySQL DB dump하여 복사하기'
 date: '2022-07-01 00:00:00'
 author: jjunyong
 tags: MySQL DBeaver
-categories: DB
+categories: Data DevOps
 ---
 
 기존에 MySQL 환경에서 1개 database로만 운영하던 서비스에 dev용 database를 추가하기 위해 DBeaver에서 dump하여 복사한 방법을 알아보자.

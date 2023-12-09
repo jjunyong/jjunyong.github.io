@@ -4,7 +4,7 @@ title: '[Git] Personal access token 이용하여 github remote 인증하기  in 
 date: '2022-02-09 00:00:00'
 author: jjunyong
 tags: Git
-categories: Git
+categories: Git DevOps
 ---
 
 로컬에서 Github repo 로 push 할 때 이제는 깃헙계정 패스워드가 아닌 Personal access token을 입력하도록 한다.

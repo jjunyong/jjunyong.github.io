@@ -4,7 +4,7 @@ title: '[AWS architect] 3. Networking 기초'
 date: '2022-07-05 20:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## 개요

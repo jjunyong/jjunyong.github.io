@@ -19,7 +19,7 @@ module.exports = {
     },
     social: {
       github: `https://github.com/jjunyong`, // `https://github.com/zoomKoding`,
-      linkedIn: ``,
+      linkedIn: `https://www.linkedin.com/in/jjunyong/`,
       email: `sjm3bro@gmail.com`, // `zoomkoding@gmail.com`,
     },
   },
@@ -43,14 +43,19 @@ module.exports = {
       // ========================================================
       // ========================================================
       {
-        date: '2021.02 ~',
-        activity: '개인 블로그 개발 및 운영',
+        date: '2022~현재',
+        activity: '기아 온라인 플랫폼(kia.com) 개발 운영',
         links: {
-          post: '/gatsby-starter-zoomkoding-introduction',
-          github: 'https://github.com/zoomkoding/zoomkoding-gatsby-blog',
-          demo: 'https://www.zoomkoding.com',
+          demo: 'https://kia.com/kr',
         },
       },
+      {
+        date: '2022~현재',
+        activity: '온유(OnYou) 앱 개발 운영',
+        links: {
+          demo: 'https://kia.com/kr',
+        },
+      }
     ],
 
     projects: [

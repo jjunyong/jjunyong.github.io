@@ -4,7 +4,7 @@ title: '[AWS architect] 7. AWS Monitoring'
 date: '2022-07-06 00:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## AWS Cloudwatch

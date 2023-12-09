@@ -4,7 +4,7 @@ title: '[AWS architect] 9. 컨테이너'
 date: '2022-07-07 00:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## AWS애서의 컨테이너 실행 

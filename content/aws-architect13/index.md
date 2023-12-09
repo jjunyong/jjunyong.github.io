@@ -4,7 +4,7 @@ title: '[AWS architect] 13. 백업 및 복구, 재해대책'
 date: '2022-07-08 00:00:00'
 author: jjunyong
 tags: AWS
-categories: AWS
+categories: AWS DevOps
 ---
 
 ## 개요
