@@ -210,16 +210,16 @@ Install the AppArmor profile on Node cluster1-node1. Connect using ssh cluster1-
 Add label security=apparmor to the Node
 
 Create a Deployment named apparmor in Namespace default with:
+- One replica of image nginx:1.19.2
+- NodeSelector for security=apparmor
+- Single container named c1 with the AppArmor profile enabled
 
-One replica of image nginx:1.19.2
-NodeSelector for security=apparmor
-Single container named c1 with the AppArmor profile enabled
 The Pod might not run properly with the profile enabled. Write the logs of the Pod into /opt/course/9/logs so another team can work on getting the application running.
 
 ### Q9 정답
 - 이 문제는 mockexam의 AppArmor문제와 크게 다르지 않은데 단지 로컬 환경에서 node1로 profile파일을 옮겨줘야 하기에 scp 명령을 활용하거나 copy&paste해야 한다.
   - ```scp /opt/course/9/profile cluster1-node1:~/```
-- 모든 작업이 끝난 후  로그를 로컬 파일에 저장 
+- 모든 작업이 끝난 후 로그를 로컬 파일에 저장 
   - k logs apparmor-85c65645dc-jbch8 > /opt/course/9/logs
 
 ### Q10 : Container Runtime Sandbox gVisor
@@ -262,7 +262,7 @@ Write the dmesg output of the successfully started Pod into /opt/course/10/gviso
   status: {}
   ```
 - dmesg 로 pod가 gvisor sandbox가 적용되었는 지 확인 후 output으로 로그 저장한다.
-  - k -n team-purple exec gvisor-test -- dmesg > /opt/course/10/gvisor-test-dmesg
+  - k -n team-purple exec gvisor-test -- dmesg > /opt/course/10/gvisor-test-dmesg₩`
 
 ### Q11 : Secrets in ETCD
 
@@ -281,3 +281,9 @@ Read the complete Secret content directly from ETCD (using etcdctl) and store it
 ```
   - 이 결과를 /opt/course/11/etcd-secret-content에 저장한다.
 - 위에서 얻은 secret의 결과로부터 password를 base64 decode하여 /opt/course/11/database-password에 저장한다. 
+
+### Q12
+
+You're asked to investigate a possible permission escape in Namespace restricted. The context authenticates as user restricted which has only limited permissions and shouldn't be able to read Secret values.
+<br>
+Try to find the password-key values of the Secrets secret1, secret2 and secret3 in Namespace restricted. Write the decoded plaintext values into files /opt/course/12/secret1, /opt/course/12/secret2 and /opt/course/12/secret3.
