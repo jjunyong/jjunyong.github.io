@@ -19,7 +19,7 @@ module.exports = {
     },
     social: {
       github: `https://github.com/jjunyong`, // `https://github.com/zoomKoding`,
-      linkedIn: `https://www.linkedin.com/in/jjunyong/`,
+      linkedIn: ``,
       email: `sjm3bro@gmail.com`, // `zoomkoding@gmail.com`,
     },
   },
@@ -42,20 +42,46 @@ module.exports = {
       },
       // ========================================================
       // ========================================================
+      // {
+      //   date: '2021.02 ~',
+      //   activity: '개인 블로그 개발 및 운영',
+      //   links: {
+      //     post: '/gatsby-starter-zoomkoding-introduction',
+      //     github: 'https://github.com/zoomkoding/zoomkoding-gatsby-blog',
+      //     demo: 'https://www.zoomkoding.com',
+      //   },
+      // },
       {
-        date: '2022~현재',
-        activity: '기아 온라인 플랫폼(kia.com) 개발 운영',
+        date: '2019~2021',
+        activity: '현대차 대고객 온라인 플랫폼 구축 및 운영',
         links: {
-          demo: 'https://kia.com/kr',
         },
       },
       {
         date: '2022~현재',
-        activity: '온유(OnYou) 앱 개발 운영',
+        activity: '기아 온라인 판매 플랫폼(kia.com) 개발 및 운영',
         links: {
-          demo: 'https://kia.com/kr',
+          demo: 'https://kia.com/kr'
+        },
+      },
+      {
+        date: '2022~현재',
+        activity: '온유(Onyou) 앱 개발 및 운영',
+        links: {
+          post: '/onyou-restropect',
+          googlePlay: 'https://play.google.com/store/apps/details?id=com.onyoufrontend&pcampaignid=web_share',
+          appStore: ''
+        },
+      },
+      {
+        date: '2023~현재',
+        activity: 'Bringit 앱 개발',
+        links: {
+          googlePlay: '',
+          appStore: ''
         },
       }
+      
     ],
 
     projects: [
@@ -77,15 +103,14 @@ module.exports = {
       // ========================================================
       // ========================================================
       {
-        title: '개발 블로그 테마 개발',
+        title: '온유(Onyou) 앱 개발 및 운영',
         description:
-          '개발 블로그를 운영하는 기간이 조금씩 늘어나고 점점 많은 생각과 경험이 블로그에 쌓아가면서 제 이야기를 담고 있는 블로그를 직접 만들어보고 싶게 되었습니다. 그동안 여러 개발 블로그를 보면서 좋았던 부분과 불편했던 부분들을 바탕으로 레퍼런스를 참고하여 직접 블로그 테마를 만들게 되었습니다.',
-        techStack: ['gatsby', 'react'],
-        thumbnailUrl: 'blog.png',
+          'SNS 기반의 공동체 소모임 어플리케이션',
+        techStack: ['ReactNative', 'Spring boot', 'K8S'],
+        thumbnailUrl: 'onyou.png',
         links: {
-          post: '/gatsby-starter-zoomkoding-introduction',
-          github: 'https://github.com/zoomkoding/zoomkoding-gatsby-blog',
-          demo: 'https://www.zoomkoding.com',
+          post: '/onyou-restropect',
+          googlePlay: 'https://play.google.com/store/apps/details?id=com.onyoufrontend&pcampaignid=web_share'
         },
       },
     ],
