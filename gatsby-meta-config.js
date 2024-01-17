@@ -52,21 +52,21 @@ module.exports = {
       //   },
       // },
       {
-        date: '2019~2021',
+        date: '2019~2022',
         activity: '현대차 대고객 온라인 플랫폼 구축 및 운영',
         links: {
         },
       },
       {
         date: '2022~현재',
-        activity: '기아 온라인 판매 플랫폼(kia.com) 개발 및 운영',
+        activity: '국내 기아닷컴 (kia.com) 개발 및 운영',
         links: {
           demo: 'https://kia.com/kr'
         },
       },
       {
         date: '2022~현재',
-        activity: '온유(Onyou) 앱 개발 및 운영',
+        activity: 'SNS 기반 소모임 플랫폼 온유(Onyou) 앱 개발 및 운영',
         links: {
           post: '/onyou-restropect',
           googlePlay: 'https://play.google.com/store/apps/details?id=com.onyoufrontend&pcampaignid=web_share',
@@ -75,7 +75,7 @@ module.exports = {
       },
       {
         date: '2023~현재',
-        activity: 'Bringit 앱 개발',
+        activity: '소셜 스포츠 경쟁 플랫폼 Bringit앱 개발',
         links: {
           googlePlay: '',
           appStore: ''
