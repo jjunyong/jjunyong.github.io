@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '라우팅 추적(ICMP)과 ARP'
-date: '2024-01-19 00:00:00'
+date: '2024-01-21 00:00:00'
 author: jjunyong
 tags: network
 categories: Linux
@@ -29,7 +29,9 @@ traceroute -n www.google.com
   ```
 - -f, -Y옵션은 패킷 filtering을 위해 사용되며 -f는 protocol을 필터링하고, -Y 뒤에는 표현식을 적어주어 필터링한다. 
 
-### ARP란?
+---
+
+## ARP란?
 - Address Resolution Protocol
 - L2(데이터링크 계층) 통신
 - IP주소를 MAC주소에 매핑하기 위하여 사용된다. 
@@ -37,7 +39,6 @@ traceroute -n www.google.com
 <br>
 
   > 다른 네트웍 망으로 통신의 경우 라우터는 목적지 Gateway의 MAC 주소를 사용하여 이더넷 프레임을 만들어 해당 네트워크로 패킷을 전송한다. 이런 과정을 통해 패킷은 목적지 네트워크로 계속해서 전달되고, 각 네트워크마다 라우터가 목적지 Gateway의 MAC 주소 데이터를 담은 이더넷 프레임을 만들어 전송된다. 
-
 
 ### ARP 추적과정
 - 각 네트워크 장치(컴퓨터)는 ARP 테이블을 지니고 있다. 
@@ -61,7 +62,6 @@ sudo tcmdump -xxi {network interface} arp and dst {LAN 대역의 목적지 ip} #
 ping {LAN 대역의 목적지 ip}
 ```
 
-
 ![image1](./image1.png)
 
 - 위의 3번 명령을 실행시킨 상태에서 다른 터미널에서 ping명령을 하게 되면 위와 같은 결과가 나오는 것을 볼 수 있는데, 이 때 ARP 패킷은 브로드캐스팅되며, 송신지 MAC의 주소가 내 PC MAC주소로 되어있음을 확인할 수 있다.
@@ -78,3 +78,24 @@ ping {LAN 대역의 목적지 ip}
 
   sudo arp # ARP 테이블 조회( ip neigh 와 유사 ) 
   ```
+---
+
+## DNS
+
+### DNS 동작과정 추적하기
+```bash
+# DNS 캐시 정보 비우기
+sudo systemd-resolve --flush-caches
+
+# DNS 동작 과정 추적
+sudo tshark -i {network interface} -Y dns
+
+# 다른 터미널에서 ping 실행해보기
+ping www.google.com
+```
+
+- `ping 8.8.8.8`은 되고 `ping google.com`은 안된다면 네트웍이 안되는 게 아니라 DNS 서버 정보에 대한 셋팅이 잘 안된 것이다. 
+- 한 번도 통신하지 않은 상태에서 `ping www.google.com`을 실행하면 어떤 일이 일어나는가? 
+  - 등록된 DNS 서버에 DNS 쿼리를 보내야 하는데 ARP 테이블에는 외부 네트웍망에 있는 DNS 서버 ip 에 대한 MAC주소가 없는 상태이다. 
+  - 따라서 ARP 브로드캐스팅을 통해 Gateway의 MAC주소를 얻어내고, 이를 이용해 패킷을 만들어 DNS 서버에 쿼리를 날린다. 
+  - DNS 쿼리를 통해 알아낸 목적지의 ip 주소와 최초 ARP통신을 통해 알아낸 gateway의 MAC주소로 ICMP 패킷을 전송하게 된다. 
