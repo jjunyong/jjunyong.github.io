@@ -36,6 +36,7 @@ categories: Linux
 ![image4](./image4.png)
 - socket() systemcall은 file을 open하는 것과 마찬가지로 file descriptor를 반환한다. 그리고 process마다 가지고 있는 fd table에 이를 추가가 되는 형태이다. 
     > 프로세스가 파일을 열면, OS는 새로운 fd를 할당해주고, 파일을 닫을 때는 해당 파일 디스크립터를 해제한다. fd table 통해 각 fd에 연결된 파일 or 소켓 등의 정보를 추적하여 프로세스가 I/O 리소스에 접근할 수 있다.
+    > 왜 socket()은 file descriptor를 반환하는가? 리눅스에서는 네트웍 자원을 포함하여 모든 리소스를 사용할 때 VFS를 통해서 하기 떄문이다.
 - open() syscall이든 socket() syscall이든 fd table에 VFS의 주요 자료구조인 `struct file`이라는 구조체를 만들어주는 것은 매한가지이며 fd는 이 구조체를 가리키는 참조이다. 파일이라면 struct file이 struct inode와 연결될 것이고 socket이라면 struct socket이 연결될 것이라는 차이점이 있다. 
 
 
