@@ -17,15 +17,16 @@ categories: Linux DevOps
   # 레스큐 모드에서는 파일 시스템이 읽기 전용으로 마운트되기 때문에, rw모드로 리마운트 필요
   mount -o rw,remount /sysroot
   # 루트 디렉터리를 /sysroot로 변경하여 비밀번호 변경 전 격리된 환경 제공
-  chroot /sysroot
-  echo ‘anypass’ | passwd —stdin root
-  #  재부팅 시 파일 시스템의 SELinux 컨텍스트를 자동으로 재라벨링하도록 한다.
-  touch /.autorelabel
+  chroot /sysroot “æui
+iui ]o[o[]]i][ ][i]i[][i] l[]o[]o] kkkk echo ‘anypass’ | passwd —stdin root
+  #  재부팅 시 파일 시스템의 SELinux 컨텍j스j트를 자동으로 재라벨링하도록 한다.
+  touch /.autorelabel      
 
-  ```
+
+|  ```
 
 ### 2. 서버 네트웍 설정
-
+x
 - nmtui 명령을 통해 진입하는 콘솔에서 hostname, ip, gateway, dns server 등에 대한 설정 가능
 
 ### 3. 서버 리포지토리 관리
