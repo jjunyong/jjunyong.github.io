@@ -40,16 +40,16 @@ self.__precacheManifest = [
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "f91b0167a4192a165a2ea2f15c263558"
+    "revision": "03d2df8e93f4d33e133711a724351217"
   },
   {
-    "url": "static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2"
+    "url": "static/webfonts/s/roboto/v32/KFOlCnqEu92Fr1MmSU5fBBc4.woff2"
   },
   {
-    "url": "static/webfonts/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2"
+    "url": "static/webfonts/s/roboto/v32/KFOmCnqEu92Fr1Mu4mxK.woff2"
   },
   {
-    "url": "static/webfonts/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc4.woff2"
+    "url": "static/webfonts/s/roboto/v32/KFOlCnqEu92Fr1MmEU9fBBc4.woff2"
   },
   {
     "url": "polyfill-f196834924f88edde8fc.js"
