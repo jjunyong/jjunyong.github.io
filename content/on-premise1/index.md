@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: 'On-premise 1. 공유기, 서버, 네트웍 설정' 
-date: '2023-07-01 00:00:00'
+date: '2024-08-01 00:00:00'
 author: jjunyong
 tags: DevOps
 categories: DevOps

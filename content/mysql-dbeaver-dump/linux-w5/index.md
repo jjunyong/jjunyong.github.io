@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[리눅스 스터디] 5. 인터넷, 네트워크, 도메인'
-date: '2023-07-24 00:00:00'
+date: '2024-09-27 00:00:00'
 author: jjunyong
 tags: Linux
 categories: Linux

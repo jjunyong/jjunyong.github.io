@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[Kotlin] 변수, 타입, 연산자'
-date: '2023-11-17 00:00:00'
+date: '2024-09-17 00:00:00'
 author: jjunyong
 tags:
 categories: Java/Kotlin

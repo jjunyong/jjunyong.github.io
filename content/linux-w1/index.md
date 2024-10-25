@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[리눅스 스터디] 1. 리눅스 기초 & IO redirecdtion'
-date: '2023-06-28 00:00:00'
+date: '2024-08-28 00:00:00'
 author: jjunyong
 tags: Linux
 categories: Linux

@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: 'On-premise 서버 구축하기 3. 호스트 서버 보안' 
-date: '2023-07-02 00:00:00'
+date: '2024-08-03 00:00:00'
 author: jjunyong
 tags: DevOps
 categories: DevOps

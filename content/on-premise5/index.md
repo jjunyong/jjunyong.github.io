@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: 'On-premise 5. 네트워크 설정' 
-date: '2023-07-02 00:00:00'
+date: '2024-08-30 00:00:00'
 author: jjunyong
 tags: DevOps
 categories: DevOps

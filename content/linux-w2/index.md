@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[리눅스 스터디] 2. Shell Script, 디렉토리 구조 및 파일'
-date: '2023-07-04 00:00:00'
+date: '2024-09-04 00:00:00'
 author: jjunyong
 tags: Linux
 categories: Linux

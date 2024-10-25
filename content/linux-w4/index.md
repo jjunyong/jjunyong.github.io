@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[리눅스 스터디] 4. 사용자 & 권한 & 그룹'
-date: '2023-07-19 00:00:00'
+date: '2024-09-25 00:00:00'
 author: jjunyong
 tags: Linux
 categories: Linux

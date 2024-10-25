@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[리눅스 스터디] 3. 프로세스'
-date: '2023-07-12 00:00:00'
+date: '2024-09-12 00:00:00'
 author: jjunyong
 tags: Linux
 categories: Linux

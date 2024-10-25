@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[Error] docker: failed to register layer: open /var/lib/docker/overlay2/... : no such file or directory.'
-date: '2023-07-22 00:00:00'
+date: '2024-07-22 00:00:00'
 author: jjunyong
 tags: 
 categories: Error
