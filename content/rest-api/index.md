@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: 'REST API란 무엇인가? REST API 제약조건, 실용적인 REST API 설계 방법 ( feat. RESTful하다는 것 )'
-date: '2022-01-25 00:00:00'
+date: '2024-07-02 00:00:00'
 author: jjunyong
 tags: REST API
 categories: WEB

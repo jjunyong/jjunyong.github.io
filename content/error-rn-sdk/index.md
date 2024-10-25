@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[Error] React native SDK location not found'
-date: '2022-01-26 00:00:00'
+date: '2024-07-15 00:00:00'
 author: jjunyong
 tags: RN Android
 categories: Error

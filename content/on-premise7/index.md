@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: 'On-premise 7. Redis 구축하기' 
-date: '2023-07-11 00:00:00'
+date: '2024-09-11 00:00:00'
 author: jjunyong
 tags: DevOps
 categories: DevOps

@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[Error] Prometheus CrashLoopbackOff'
-date: '2022-12-14 00:00:00'
+date: '2024-10-14 00:00:00'
 author: jjunyong
 tags: prometheus
 categories: Error DevOps

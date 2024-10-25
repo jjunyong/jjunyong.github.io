@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[Git] Personal access token 이용하여 github remote 인증하기  in Mac'
-date: '2022-02-09 00:00:00'
+date: '2024-09-15 00:00:00'
 author: jjunyong
 tags: Git
 categories: DevOps

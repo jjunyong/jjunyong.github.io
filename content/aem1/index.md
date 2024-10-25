@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[AEM] Adobe Experience Manager'
-date: '2022-02-07 22:13:33'
+date: '2024-10-20 22:13:33'
 author: jjunyong
 tags: AEM
 categories: WEB

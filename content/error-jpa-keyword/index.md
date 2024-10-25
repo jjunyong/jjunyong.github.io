@@ -1,7 +1,7 @@
 ---
 emoji: 🧢
 title: '[Error] JPA MYSQL "You have an error in you SQL syntax"'
-date: '2022-01-26 00:00:00'
+date: '2024-10-12 00:00:00'
 author: jjunyong
 tags: JPA MySQL
 categories: Error
